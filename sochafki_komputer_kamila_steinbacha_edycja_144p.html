@@ -1,0 +1,2766 @@
+<!DOCTYPE html>
+<html lang="pl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sochafki™ — Dźwięk tak czysty, że aż trzeszczy (ft. Komputer Kamila Steinbacha)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter + Space Grotesk dla kontrastu premium vs meme -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --meme-cyan: #00ffff;
+            --meme-black: #050505;
+            --deep-fry-level: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .font-grotesk {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Główny kontener poddawany smażeniu (Deep-Fry) */
+        #fry-container {
+            transition: filter 0.12s ease-out, transform 0.08s linear;
+            transform-origin: center top;
+        }
+
+        /* Animacja drżenia ekranu przy wysokim poziomie Deep-Fry */
+        @keyframes overdriveShake {
+            0% { transform: translate(0px, 0px) rotate(0deg); }
+            20% { transform: translate(-2px, 1px) rotate(-0.2deg); }
+            40% { transform: translate(2px, -2px) rotate(0.2deg); }
+            60% { transform: translate(-2px, -1px) rotate(0deg); }
+            80% { transform: translate(2px, 2px) rotate(0.15deg); }
+            100% { transform: translate(0px, 0px) rotate(0deg); }
+        }
+
+        .shake-active {
+            animation: overdriveShake 0.12s infinite;
+        }
+
+        /* Nakładka artefaktów JPEG / szumu */
+        #jpeg-noise-overlay {
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            z-index: 40;
+            opacity: 0;
+            mix-blend-mode: overlay;
+            background-image: 
+                repeating-linear-gradient(0deg, rgba(0,255,255,0.15) 0px, rgba(0,255,255,0.15) 1px, transparent 1px, transparent 4px),
+                repeating-linear-gradient(90deg, rgba(255,0,0,0.15) 0px, rgba(255,0,0,0.15) 2px, transparent 2px, transparent 8px);
+            background-size: 8px 8px;
+            transition: opacity 0.2s ease;
+        }
+
+        /* Stylizacja suwaków */
+        input[type="range"].cyber-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #1a1a1a;
+            height: 10px;
+            border-radius: 999px;
+            outline: none;
+            border: 1px solid #00ffff;
+        }
+
+        input[type="range"].cyber-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #00ffff;
+            cursor: pointer;
+            border: 3px solid #000000;
+            box-shadow: 0 0 12px #00ffff;
+            transition: transform 0.1s;
+        }
+
+        input[type="range"].cyber-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+
+        input[type="range"].cyber-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #00ffff;
+            cursor: pointer;
+            border: 3px solid #000000;
+            box-shadow: 0 0 12px #00ffff;
+        }
+
+        /* Pixelated canvas rendering dla autentycznego 144p */
+        .pixelated {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* Konfetti canvas */
+        #confetti-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Animacja wskaźnika VU */
+        .vu-bar {
+            transition: height 0.08s ease-out, background-color 0.15s;
+        }
+
+        /* --- KOMPUTER KAMILA STEINBACHA: CRT & WINDOWS XP --- */
+        .crt-bezel {
+            background: linear-gradient(145deg, #e5dfc9 0%, #cfc7ae 55%, #b2a88c 100%);
+            box-shadow:
+                inset 0 2px 4px rgba(255,255,255,0.7),
+                inset 0 -6px 12px rgba(0,0,0,0.35),
+                0 15px 35px rgba(0,0,0,0.7);
+        }
+
+        .crt-screen {
+            position: relative;
+            overflow: hidden;
+            border-radius: 14px / 10px;
+            box-shadow: inset 0 0 28px rgba(0, 0, 0, 0.85);
+            background: #111;
+        }
+
+        /* Skanlinie CRT */
+        .crt-scanlines::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.18) 0px,
+                rgba(0, 0, 0, 0.18) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            z-index: 20;
+        }
+
+        /* Klasyczna tapeta Windows XP (Bliss parodia) */
+        .xp-wallpaper {
+            background:
+                radial-gradient(ellipse at 50% 108%, #4da829 0%, #3b8d1d 42%, transparent 43%),
+                radial-gradient(ellipse at 18% 98%, #63bf34 0%, #449b21 38%, transparent 39%),
+                linear-gradient(180deg, #2b72d6 0%, #6cb2f7 52%, #a8d8ff 72%, #3a8b1d 73%);
+        }
+
+        /* Animacja wyłączania CRT po kopnięciu listwy */
+        @keyframes crtPowerOff {
+            0%   { transform: scale(1, 1); filter: brightness(1); opacity: 1; }
+            35%  { transform: scale(1.05, 0.015); filter: brightness(4); opacity: 1; }
+            70%  { transform: scale(0.03, 0.015); filter: brightness(6); opacity: 1; }
+            100% { transform: scale(0, 0); filter: brightness(0); opacity: 0; }
+        }
+
+        .crt-turning-off {
+            animation: crtPowerOff 0.52s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* Animacja błogosławieństwa znakiem krzyża */
+        @keyframes blessingGlow {
+            0%   { opacity: 0; transform: scale(0.6) translateY(10px); }
+            25%  { opacity: 1; transform: scale(1.15) translateY(0); }
+            75%  { opacity: 1; transform: scale(1.0) translateY(-6px); }
+            100% { opacity: 0; transform: scale(1.2) translateY(-18px); }
+        }
+
+        .blessing-anim {
+            animation: blessingGlow 1.5s ease-out forwards;
+        }
+
+        /* Animacja wibracji obudowy PC przy 3 FPS */
+        @keyframes pcRattle {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-1.5px, 1px); }
+            50% { transform: translate(1.5px, -1px); }
+            75% { transform: translate(-1px, -1.5px); }
+        }
+
+        .pc-rattling {
+            animation: pcRattle 0.07s infinite;
+        }
+
+        /* Migająca dioda dysku HDD */
+        @keyframes hddBlink {
+            0%, 100% { opacity: 0.25; }
+            30% { opacity: 1; box-shadow: 0 0 8px #ef4444; }
+            65% { opacity: 0.4; }
+            80% { opacity: 1; box-shadow: 0 0 10px #ef4444; }
+        }
+
+        .hdd-busy {
+            animation: hddBlink 0.28s infinite;
+        }
+
+        /* Akordeon FAQ */
+        .faq-content {
+            transition: max-height 0.28s ease, opacity 0.25s ease;
+        }
+    </style>
+</head>
+<body class="bg-black text-white selection:bg-[#00ffff] selection:text-black">
+
+    <!-- Ukryte filtry SVG do efektu ostrej posteryzacji / deep-fry -->
+    <svg class="hidden" aria-hidden="true">
+        <defs>
+            <filter id="deep-fry-svg-filter">
+                <feComponentTransfer>
+                    <feFuncR type="discrete" tableValues="0 0.25 0.5 0.75 1"/>
+                    <feFuncG type="discrete" tableValues="0 0.25 0.5 0.75 1"/>
+                    <feFuncB type="discrete" tableValues="0 0.25 0.5 0.75 1"/>
+                </feComponentTransfer>
+                <feConvolveMatrix order="3" kernelMatrix="0 -1 0 -1 5 -1 0 -1 0" preserveAlpha="true"/>
+            </filter>
+        </defs>
+    </svg>
+
+    <!-- Nakładka artefaktów kompresji JPEG -->
+    <div id="jpeg-noise-overlay"></div>
+
+    <!-- Canvas na konfetti SOCHAFKI -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Pływający Panel Kontrolny Deep-Fry (poza #fry-container, żeby zawsze był czytelny i klikalny) -->
+    <aside id="deep-fry-panel" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-xl bg-black/95 border-2 border-[#00ffff] rounded-2xl p-3.5 sm:p-4 shadow-[0_0_25px_rgba(0,255,255,0.35)] backdrop-blur-md">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#00ffff] animate-pulse"></span>
+                <label for="deep-fry-slider" class="text-xs sm:text-sm font-black uppercase tracking-wider text-[#00ffff]">
+                    Poziom Sochafek (Kompresja JPEG)
+                </label>
+            </div>
+            <span id="deep-fry-badge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-white text-black">
+                0% • Zwykłe słuchawki
+            </span>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="text-xs text-neutral-400 font-bold">4K</span>
+            <input type="range" id="deep-fry-slider" min="0" max="100" value="18" class="cyber-slider flex-1" aria-label="Poziom usmażenia strony">
+            <span class="text-xs text-[#00ffff] font-black">144p 🔥</span>
+        </div>
+    </aside>
+
+    <!-- GŁÓWNA ZAWARTOŚĆ STRONY (poddawana filtrom Deep-Fry) -->
+    <div id="fry-container" class="pb-36">
+
+        <!-- Nawigacja w stylu ekskluzywnego sklepu + biały pasek mema -->
+        <header class="sticky top-0 z-30 bg-black/90 backdrop-blur-md border-b border-[#00ffff]/30">
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-2">
+                <a href="#" class="flex items-center gap-2 group shrink-0">
+                    <span class="bg-white text-black font-black px-2.5 py-0.5 rounded-md text-base sm:text-lg tracking-tight group-hover:bg-[#00ffff] transition-colors">
+                        Sochafki™
+                    </span>
+                    <span class="hidden xl:inline-block text-[11px] font-bold uppercase tracking-widest text-[#00ffff] border border-[#00ffff]/50 px-2 py-0.5 rounded-full">
+                        Seria Bazar Pro
+                    </span>
+                </a>
+
+                <nav class="hidden lg:flex items-center gap-5 text-xs xl:text-sm font-semibold text-neutral-300">
+                    <a href="#symulator" class="hover:text-[#00ffff] transition-colors">Symulator</a>
+                    <a href="#steinbach" class="hover:text-[#00ffff] transition-colors text-[#00ffff] font-bold">Komputer Steinbacha</a>
+                    <a href="#rozplatywanie" class="hover:text-[#00ffff] transition-colors">Rozplątywanie</a>
+                    <a href="#specyfikacja" class="hover:text-[#00ffff] transition-colors">Specyfikacja</a>
+                    <a href="#opinie" class="hover:text-[#00ffff] transition-colors">Opinie</a>
+                </nav>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleMobileNav()" class="lg:hidden p-2 rounded-xl bg-neutral-900 border border-neutral-700 text-neutral-200 text-xs font-bold" aria-label="Menu nawigacji">
+                        ☰ Menu
+                    </button>
+                    <button onclick="openBuyModal()" class="bg-[#00ffff] hover:bg-white text-black font-black text-xs sm:text-sm px-3.5 sm:px-4 py-2 rounded-xl transition-transform active:scale-95 shadow-[0_0_15px_rgba(0,255,255,0.4)] shrink-0">
+                        KUP (4,99 zł)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobilne menu rozwijane -->
+            <div id="mobile-nav" class="hidden lg:hidden border-t border-neutral-800 bg-black/95 px-4 py-3">
+                <div class="flex flex-wrap gap-2 text-xs font-bold">
+                    <a href="#symulator" onclick="toggleMobileNav()" class="px-3 py-2 rounded-xl bg-neutral-900 text-neutral-200 hover:text-[#00ffff]">🎧 Symulator</a>
+                    <a href="#steinbach" onclick="toggleMobileNav()" class="px-3 py-2 rounded-xl bg-[#00ffff]/15 border border-[#00ffff]/40 text-[#00ffff]">🖥️ Komputer Steinbacha</a>
+                    <a href="#rozplatywanie" onclick="toggleMobileNav()" class="px-3 py-2 rounded-xl bg-neutral-900 text-neutral-200 hover:text-[#00ffff]">🧶 Rozplątywanie</a>
+                    <a href="#soundboard" onclick="toggleMobileNav()" class="px-3 py-2 rounded-xl bg-neutral-900 text-neutral-200 hover:text-[#00ffff]">🔊 Soundboard</a>
+                    <a href="#specyfikacja" onclick="toggleMobileNav()" class="px-3 py-2 rounded-xl bg-neutral-900 text-neutral-200 hover:text-[#00ffff]">📋 Specyfikacja</a>
+                    <a href="#opinie" onclick="toggleMobileNav()" class="px-3 py-2 rounded-xl bg-neutral-900 text-neutral-200 hover:text-[#00ffff]">⭐ Opinie</a>
+                    <a href="#faq" onclick="toggleMobileNav()" class="px-3 py-2 rounded-xl bg-neutral-900 text-neutral-200 hover:text-[#00ffff]">❓ FAQ</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- SEKCJA HERO -->
+        <section class="relative overflow-hidden pt-10 pb-16 sm:pt-16 sm:pb-24 px-4 sm:px-6 border-b border-neutral-800">
+            <!-- Subtelna cyjanowa poświata w tle -->
+            <div class="absolute top-10 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#00ffff]/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center relative z-10">
+                <!-- Lewa kolumna: Tekst sprzedażowy (parodia Apple/Audiofilii) -->
+                <div class="text-center lg:text-left space-y-6">
+                    <div class="inline-flex items-center gap-2 bg-neutral-900 border border-[#00ffff]/40 rounded-full px-3.5 py-1.5 text-xs font-bold text-[#00ffff]">
+                        <span>⚡</span>
+                        <span>NOWA GENERACJA DŹWIĘKU MONO 144p</span>
+                    </div>
+
+                    <h1 class="text-5xl sm:text-7xl font-black tracking-tighter leading-none">
+                        <span class="bg-white text-black px-3 py-1 rounded-xl inline-block mb-2 shadow-[6px_6px_0px_#00ffff]">Sochafki™</span>
+                        <span class="block text-2xl sm:text-3xl font-bold text-neutral-300 mt-3 tracking-normal">
+                            Przyszłość audio.<br class="hidden sm:inline"> Z 2006 roku.
+                        </span>
+                    </h1>
+
+                    <p class="text-base sm:text-lg text-neutral-300 max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                        <strong class="text-[#00ffff]">Dźwięk tak czysty, że aż trzeszczy.</strong> 
+                        Zaprojektowane z myślą o koneserach, którzy cenią sobie niepowtarzalny szum tła i oficjalnie certyfikowane pod 
+                        <a href="#steinbach" class="underline decoration-[#00ffff] hover:text-[#00ffff] font-bold">Komputer Kamila Steinbacha™</a>.
+                        <span class="text-neutral-400 block mt-1 text-sm sm:text-base italic">
+                            (Prawa działa, jak dociśniesz wtyczkę pod kątem 47 stopni i nie oddychasz).
+                        </span>
+                    </p>
+
+                    <!-- Przyciski CTA -->
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                        <button onclick="openBuyModal()" class="w-full sm:w-auto px-7 py-4 bg-[#00ffff] hover:bg-white text-black font-black text-base rounded-2xl shadow-[0_0_25px_rgba(0,255,255,0.5)] transition-all hover:-translate-y-0.5 active:scale-95">
+                            KUP TERAZ (4,99 zł)
+                        </button>
+                        <button onclick="scrollToSimulatorAndPlay()" class="w-full sm:w-auto px-7 py-4 bg-neutral-900 hover:bg-neutral-800 text-white border-2 border-[#00ffff]/60 font-bold text-base rounded-2xl transition-all hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2">
+                            <span>🎧</span>
+                            <span>PRZETESTUJ DŹWIĘK</span>
+                        </button>
+                    </div>
+
+                    <!-- Mini-odznaki zaufania -->
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2 text-xs text-neutral-400 font-semibold">
+                        <span class="flex items-center gap-1.5">✅ Gwarancja do bramy</span>
+                        <span class="flex items-center gap-1.5">✅ Fabryczny supeł na kablu</span>
+                        <span class="flex items-center gap-1.5">✅ Certyfikat Steinbacha 2007</span>
+                    </div>
+                </div>
+
+                <!-- Prawa kolumna: Interaktywna grafika mema „Sochafki” (Canvas Deep-Fry) -->
+                <div class="flex flex-col items-center">
+                    <div id="meme-card" class="relative w-full max-w-md rounded-2xl overflow-hidden border-4 border-[#00ffff] shadow-[0_0_40px_rgba(0,255,255,0.3)] bg-white transition-transform duration-200 hover:scale-[1.02] cursor-pointer" title="Kliknij, żeby jeszcze bardziej usmażyć obrazek!">
+                        <!-- Canvas generujący autentycznego mema Sochafki z białym paskiem i jaskrawocyjanowym tłem -->
+                        <canvas id="sochafki-meme-canvas" class="w-full h-auto block pixelated"></canvas>
+                        
+                        <!-- Znacznik interakcji -->
+                        <div class="absolute bottom-3 right-3 bg-black/85 border border-[#00ffff] text-[#00ffff] text-[11px] font-black px-2.5 py-1 rounded-lg backdrop-blur-sm">
+                            KLIKNIJ = +KOMPRESJA 📸
+                        </div>
+                    </div>
+                    <p class="text-xs text-neutral-500 mt-3 text-center">
+                        *Zdjęcie produktu wykonane kalkulatorem Casio w rozdzielczości 144p.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEKCJA 2: INTERAKTYWNY SYMULATOR RUCHOMEGO KABLA (WEB AUDIO API) -->
+        <section id="symulator" class="py-16 sm:py-24 px-4 sm:px-6 bg-neutral-950 border-b border-neutral-800">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-10 space-y-3">
+                    <span class="text-xs font-black uppercase tracking-widest text-[#00ffff] bg-[#00ffff]/10 border border-[#00ffff]/30 px-3 py-1 rounded-full">
+                        Laboratorium Akustyczne
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-black tracking-tight">
+                        Symulator Ruchomego Kabla™
+                    </h2>
+                    <p class="text-neutral-400 max-w-xl mx-auto text-sm sm:text-base">
+                        Poczuj prawdziwe doświadczenie Sochafek bez wychodzenia z domu. Włącz muzykę i znajdź jedyny magiczny kąt wygięcia wtyczki Jack 3.5mm, przy którym grają obie słuchawki.
+                    </p>
+                </div>
+
+                <!-- Konsola Symulatora -->
+                <div class="bg-black border-2 border-[#00ffff]/60 rounded-3xl p-5 sm:p-8 shadow-[0_0_35px_rgba(0,255,255,0.15)] space-y-6">
+                    
+                    <!-- Górny pasek: Przycisk PLAY + Status połączenia -->
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6 border-b border-neutral-800">
+                        <div class="flex items-center gap-3 w-full sm:w-auto">
+                            <button id="audio-toggle-btn" onclick="toggleAudio()" class="flex-1 sm:flex-none px-6 py-3.5 bg-[#00ffff] hover:bg-white text-black font-black rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,255,255,0.35)]">
+                                <span id="audio-btn-icon">▶</span>
+                                <span id="audio-btn-text">WŁĄCZ MUZYKĘ</span>
+                            </button>
+                            <button onclick="nudgeCable()" class="px-4 py-3.5 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 font-bold text-sm rounded-2xl transition-all active:scale-95" title="Delikatnie puknij wtyczkę">
+                                👆 Puknij kabel
+                            </button>
+                        </div>
+
+                        <!-- Dynamiczny status styku -->
+                        <div id="cable-status-box" class="w-full sm:w-auto text-center sm:text-right px-4 py-2.5 rounded-xl bg-neutral-900 border border-neutral-700">
+                            <div class="text-[10px] uppercase tracking-wider text-neutral-400 font-bold">Status wtyczki Jack 3.5mm</div>
+                            <div id="cable-status-text" class="text-sm sm:text-base font-black text-red-400">
+                                🔇 Cisza (Włącz muzykę)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wizualizacja Lewa / Prawa słuchawka + Wygięta wtyczka -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                        <!-- Kanał LEWY -->
+                        <div class="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-4 flex flex-col items-center">
+                            <div class="text-xs font-black uppercase tracking-wider text-neutral-400 mb-2">Lewa słuchawka (L)</div>
+                            <div class="h-16 flex items-end gap-1.5" id="vu-left">
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 15%"></div>
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 25%"></div>
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 10%"></div>
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 20%"></div>
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 12%"></div>
+                            </div>
+                            <div id="left-status-label" class="text-xs font-bold text-neutral-500 mt-2">Czeka...</div>
+                        </div>
+
+                        <!-- Animowana wtyczka Jack 3.5mm SVG -->
+                        <div class="flex flex-col items-center justify-center py-2">
+                            <svg id="jack-svg" viewBox="0 0 180 120" class="w-44 h-28 overflow-visible">
+                                <!-- Gniazdo -->
+                                <rect x="10" y="45" width="32" height="30" rx="6" fill="#222" stroke="#00ffff" stroke-width="2"/>
+                                <text x="26" y="64" fill="#00ffff" font-size="9" font-weight="bold" text-anchor="middle">AUX</text>
+                                <!-- Metalowy bolec Jack -->
+                                <g id="jack-plug-group" style="transform-origin: 42px 60px; transition: transform 0.08s ease-out;">
+                                    <rect x="40" y="56" width="30" height="8" rx="2" fill="#d4d4d4"/>
+                                    <rect x="52" y="56" width="3" height="8" fill="#111"/>
+                                    <rect x="60" y="56" width="3" height="8" fill="#111"/>
+                                    <!-- Plastikowa obudowa wtyczki -->
+                                    <rect x="70" y="50" width="34" height="20" rx="4" fill="#111" stroke="#666" stroke-width="2"/>
+                                    <!-- Taśma izolacyjna -->
+                                    <rect x="96" y="51" width="12" height="18" fill="#00ffff" opacity="0.85"/>
+                                    <!-- Wygięty kabel -->
+                                    <path id="jack-cable-path" d="M 108 60 Q 140 60, 165 85" fill="none" stroke="#333" stroke-width="6" stroke-linecap="round"/>
+                                </g>
+                            </svg>
+                            <div class="text-xs font-mono text-[#00ffff] font-bold mt-1">
+                                Kąt wygięcia: <span id="cable-angle-val">32</span>% (<span id="cable-deg-val">18</span>°)
+                            </div>
+                        </div>
+
+                        <!-- Kanał PRAWY -->
+                        <div class="bg-neutral-900/80 border border-neutral-800 rounded-2xl p-4 flex flex-col items-center">
+                            <div class="text-xs font-black uppercase tracking-wider text-neutral-400 mb-2">Prawa słuchawka (R)</div>
+                            <div class="h-16 flex items-end gap-1.5" id="vu-right">
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 10%"></div>
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 15%"></div>
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 8%"></div>
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 12%"></div>
+                                <div class="vu-bar w-3 bg-[#00ffff] rounded-t" style="height: 10%"></div>
+                            </div>
+                            <div id="right-status-label" class="text-xs font-bold text-neutral-500 mt-2">Czeka...</div>
+                        </div>
+                    </div>
+
+                    <!-- Suwak wygięcia wtyczki -->
+                    <div class="space-y-2 pt-2">
+                        <div class="flex justify-between text-xs font-bold text-neutral-400">
+                            <span>0% (Wypadła)</span>
+                            <span class="text-[#00ffff]">Szukaj złotego punktu...</span>
+                            <span>100% (Złamana)</span>
+                        </div>
+                        <input type="range" id="cable-slider" min="0" max="100" value="32" class="cyber-slider w-full" aria-label="Kąt wygięcia wtyczki Jack 3.5mm">
+                        <p class="text-[11px] text-neutral-500 text-center">
+                            Wskazówka audiofila: spróbuj delikatnie wygiąć kabel w okolicach ~70%, ale uważaj — jeden fałszywy ruch i znowu gra tylko lewa!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEKCJA 3: KOMPUTER KAMILA STEINBACHA™ (OFICJALNY PARTNER SPRZĘTOWY SOCHAFEK) -->
+        <section id="steinbach" class="py-16 sm:py-24 px-4 sm:px-6 border-b border-neutral-800 relative overflow-hidden">
+            <!-- Subtelne cyjanowe światło w tle -->
+            <div class="absolute -right-24 top-20 w-[420px] h-[420px] bg-[#00ffff]/10 rounded-full blur-[120px] pointer-events-none"></div>
+
+            <div class="max-w-6xl mx-auto relative z-10 space-y-12">
+                <!-- Nagłówek sekcji -->
+                <div class="text-center space-y-3">
+                    <span class="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-widest text-black bg-[#00ffff] px-3.5 py-1 rounded-full">
+                        🖥️ Oficjalny Partner Sprzętowy Sochafek™
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-black tracking-tight">
+                        Komputer Kamila Steinbacha™
+                    </h2>
+                    <p class="text-neutral-400 max-w-2xl mx-auto text-sm sm:text-base">
+                        Legendarna maszyna z polskiego YouTube'a. Zanim klikniesz <strong class="text-white">Start → Wyłącz komputer</strong>, pamiętaj o obowiązkowym znaku krzyża przed monitorem CRT — inaczej Windows XP nie ręczy za konsekwencje.
+                    </p>
+                </div>
+
+                <!-- INTERAKTYWNE STANOWISKO KOMPUTEROWE (MONITOR CRT + OBUDOWA PC + SOCHAFKI) -->
+                <div class="bg-neutral-950 border-2 border-[#00ffff]/60 rounded-3xl p-4 sm:p-8 shadow-[0_0_40px_rgba(0,255,255,0.14)] space-y-6">
+                    
+                    <!-- Pasek telemetrii komputera -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-neutral-800 text-xs sm:text-sm">
+                        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                            <span id="pc-blessing-badge" class="px-3 py-1.5 rounded-xl bg-red-950/80 border border-red-500/60 text-red-300 font-bold">
+                                ✝️ Błogosławieństwo: BRAK (Ryzyko BSOD: 95%)
+                            </span>
+                            <span id="pc-temp-badge" class="px-3 py-1.5 rounded-xl bg-neutral-900 border border-neutral-700 text-neutral-300 font-mono font-bold">
+                                🌡️ CPU: 54°C
+                            </span>
+                        </div>
+                        <div id="pc-fps-badge" class="px-3 py-1.5 rounded-xl bg-neutral-900 border border-[#00ffff]/40 text-[#00ffff] font-mono font-bold">
+                            ⚡ Stan: Windows XP Pulpit
+                        </div>
+                    </div>
+
+                    <!-- Wizualizacja Biurka: Monitor CRT + Obudowa PC + Sochafki -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
+                        
+                        <!-- MONITOR CRT (8 kolumn na desktopie) -->
+                        <div class="lg:col-span-8 flex flex-col items-center relative">
+                            <!-- Animowana nakładka błogosławieństwa (krzyż) -->
+                            <div id="blessing-overlay" class="pointer-events-none absolute -top-4 left-1/2 -translate-x-1/2 z-30 hidden">
+                                <div class="text-5xl sm:text-6xl drop-shadow-[0_0_20px_#00ffff]">✝️✨</div>
+                            </div>
+
+                            <!-- Beżowa obudowa monitora CRT -->
+                            <div class="crt-bezel w-full max-w-xl rounded-3xl p-4 sm:p-6 border-2 border-[#a89e82] relative">
+                                <!-- Górna kratka wentylacyjna -->
+                                <div class="flex justify-center gap-1.5 mb-2.5 opacity-40">
+                                    <span class="w-8 h-1 bg-black rounded-full"></span>
+                                    <span class="w-8 h-1 bg-black rounded-full"></span>
+                                    <span class="w-8 h-1 bg-black rounded-full"></span>
+                                    <span class="w-8 h-1 bg-black rounded-full"></span>
+                                </div>
+
+                                <!-- EKRAN CRT -->
+                                <div id="crt-screen-frame" class="crt-screen crt-scanlines w-full aspect-[4/3] border-4 border-[#2b2924] select-none">
+                                    
+                                    <!-- WARSTWA 1: PULPIT WINDOWS XP -->
+                                    <div id="crt-view-desktop" class="w-full h-full xp-wallpaper flex flex-col justify-between relative">
+                                        <!-- Ikonki na pulpicie -->
+                                        <div class="p-3 sm:p-4 grid grid-cols-3 sm:grid-cols-3 gap-2 sm:gap-3 w-full max-w-sm text-center text-[10px] sm:text-[11px] font-bold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.95)]">
+                                            <button onclick="steinbachRunGame()" class="flex flex-col items-center gap-1 p-1.5 rounded hover:bg-blue-600/40 transition-colors cursor-pointer">
+                                                <span class="text-xl sm:text-2xl">🔫</span>
+                                                <span class="leading-tight">CS 1.6.exe</span>
+                                            </button>
+                                            <button onclick="steinbachRunGame()" class="flex flex-col items-center gap-1 p-1.5 rounded hover:bg-blue-600/40 transition-colors cursor-pointer">
+                                                <span class="text-xl sm:text-2xl">🚗</span>
+                                                <span class="leading-tight">GTA 4 (nie ruszy)</span>
+                                            </button>
+                                            <button onclick="steinbachShutdown()" class="flex flex-col items-center gap-1 p-1.5 rounded hover:bg-blue-600/40 transition-colors cursor-pointer">
+                                                <span class="text-xl sm:text-2xl">🎬</span>
+                                                <span class="leading-tight break-all">Jak_wylaczyc_10min.avi</span>
+                                            </button>
+                                            <button onclick="playSoundboard('gsm')" class="flex flex-col items-center gap-1 p-1.5 rounded hover:bg-blue-600/40 transition-colors cursor-pointer">
+                                                <span class="text-xl sm:text-2xl">⚡</span>
+                                                <span class="leading-tight">Winamp</span>
+                                            </button>
+                                            <button onclick="showPcToast('🔔 Gadu-Gadu: Ziom_2007 napisał: kliknij w link na Naszej Klasie!')" class="flex flex-col items-center gap-1 p-1.5 rounded hover:bg-blue-600/40 transition-colors cursor-pointer">
+                                                <span class="text-xl sm:text-2xl">☀️</span>
+                                                <span class="leading-tight">Gadu-Gadu</span>
+                                            </button>
+                                            <button onclick="showPcToast('📦 Sochafki_Sterowniki_2006.zip: Archiwum uszkodzone (i tak działa tylko lewa).')" class="flex flex-col items-center gap-1 p-1.5 rounded hover:bg-blue-600/40 transition-colors cursor-pointer">
+                                                <span class="text-xl sm:text-2xl">🎧</span>
+                                                <span class="leading-tight break-all">Sochafki_2006.zip</span>
+                                            </button>
+                                        </div>
+
+                                        <!-- Pływający dymek ostrzegawczy Windows XP -->
+                                        <div id="xp-toast" class="hidden absolute bottom-10 right-3 max-w-[230px] bg-[#ffffe1] text-black border border-black rounded-lg p-2.5 text-[11px] shadow-lg z-20">
+                                            <div class="font-black text-amber-700 mb-0.5">⚠️ Pomocnik Windows XP</div>
+                                            <div id="xp-toast-text" class="leading-snug font-semibold"></div>
+                                        </div>
+
+                                        <!-- Pasek zadań Windows XP -->
+                                        <div class="h-8 sm:h-9 bg-gradient-to-b from-[#3168d5] via-[#245edb] to-[#1941a5] border-t border-[#5a94ff] flex items-center justify-between pr-2 z-10">
+                                            <button onclick="steinbachShutdown()" class="h-full px-3 sm:px-4 bg-gradient-to-b from-[#49b349] via-[#379937] to-[#247824] hover:brightness-110 text-white font-black italic text-xs sm:text-sm rounded-r-xl shadow-md flex items-center gap-1.5 border-r border-[#1f5d1f]">
+                                                <span>🪟</span>
+                                                <span>Start</span>
+                                            </button>
+                                            <div class="hidden sm:flex items-center gap-1.5 text-[10px] text-white/90 font-semibold px-2 py-1 bg-[#1e4db7] rounded border border-[#14378a]">
+                                                <span>🎧</span>
+                                                <span>Realtek AC'97 (Mono)</span>
+                                            </div>
+                                            <div class="bg-[#0f8fee] border-l border-[#1666c0] h-full px-2.5 flex items-center gap-1.5 text-white text-[11px] font-bold">
+                                                <span title="Głośność: Trzeszczy">🔊</span>
+                                                <span>21:37</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- WARSTWA 2: 10-MINUTOWE ZAMYKANIE WINDOWS XP -->
+                                    <div id="crt-view-shutdown" class="hidden w-full h-full bg-[#003399] flex flex-col justify-between text-white">
+                                        <div class="h-10 bg-[#002266] border-b border-blue-400/40 px-4 flex items-center justify-between">
+                                            <span class="font-black text-xs sm:text-sm italic">Windows XP Professional (Pirat z bazaru)</span>
+                                            <span class="text-[10px] text-blue-200 font-mono">REC ● 144p</span>
+                                        </div>
+                                        <div class="p-4 sm:p-6 text-center space-y-3 my-auto">
+                                            <div class="text-sm sm:text-lg font-black text-yellow-300">
+                                                Trwa zamykanie systemu Windows...
+                                            </div>
+                                            <div id="shutdown-step-msg" class="text-xs sm:text-sm text-blue-100 font-semibold min-h-[2.5rem]">
+                                                Zamykanie Gadu-Gadu...
+                                            </div>
+                                            <div class="w-full max-w-xs mx-auto bg-[#001a4d] border border-blue-300/60 rounded-full h-4 overflow-hidden p-0.5">
+                                                <div id="shutdown-progress-bar" class="h-full bg-gradient-to-r from-[#00ffff] to-green-400 rounded-full transition-all duration-300" style="width: 4%"></div>
+                                            </div>
+                                            <div id="shutdown-timer-text" class="text-[11px] font-mono text-[#00ffff]">
+                                                Pozostało: 9 min 58 sek — NIE RUSZAJ MYSZKĄ!
+                                            </div>
+                                        </div>
+                                        <div class="h-8 bg-[#002266] border-t border-blue-400/40 px-4 flex items-center justify-center text-[10px] text-blue-200">
+                                            Poradnik Kamila Steinbacha: Jak wyłączyć komputer (Część 1 z 4)
+                                        </div>
+                                    </div>
+
+                                    <!-- WARSTWA 3: TRYB 3 FPS (CS 1.6 / GTA 4 POKAZ SLAJDÓW) -->
+                                    <div id="crt-view-game" class="hidden w-full h-full bg-neutral-900 flex flex-col justify-between p-3 sm:p-4 relative">
+                                        <div class="flex justify-between items-start text-[10px] sm:text-xs font-mono">
+                                            <span class="bg-black/80 text-lime-400 px-2 py-0.5 rounded border border-lime-500/40 font-black">
+                                                FPS: <span id="game-fps-num">3</span> (POKAZ SLAJDÓW)
+                                            </span>
+                                            <span class="bg-red-900/90 text-white px-2 py-0.5 rounded font-black animate-pulse">
+                                                CPU: <span id="game-temp-num">108</span>°C 🔥
+                                            </span>
+                                        </div>
+
+                                        <!-- Pikselowy „slajd” CS 1.6 / GTA 4 -->
+                                        <div id="game-slide-box" class="my-auto text-center space-y-2">
+                                            <div id="game-slide-emoji" class="text-4xl sm:text-5xl">🔫🏃‍♂️💨</div>
+                                            <div id="game-slide-title" class="text-xs sm:text-base font-black text-amber-300 uppercase tracking-wide">
+                                                de_dust2 • LAG 999 ms
+                                            </div>
+                                            <p id="game-slide-caption" class="text-[11px] sm:text-xs text-[#00ffff] bg-black/80 inline-block px-3 py-1 rounded-lg border border-[#00ffff]/40">
+                                                Słychać kroki na gali (ale tylko w lewej Sochafce)
+                                            </p>
+                                        </div>
+
+                                        <div class="flex justify-between items-center text-[10px] font-mono text-neutral-300 bg-black/75 px-2.5 py-1 rounded">
+                                            <span>HP: 12 | AMMO: 1/0</span>
+                                            <span class="text-red-400 font-bold">Wiatrak: 9400 RPM ✈️</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- WARSTWA 4: BLUE SCREEN OF DEATH (BRAK ZNAKU KRZYŻA) -->
+                                    <div id="crt-view-bsod" class="hidden w-full h-full bg-[#0000aa] text-white font-mono p-4 sm:p-5 flex flex-col justify-between text-[10px] sm:text-xs leading-relaxed">
+                                        <div class="space-y-2">
+                                            <div class="bg-white text-[#0000aa] font-black px-2 py-0.5 inline-block">
+                                                WINDOWS XP — BŁĄD KRYTYCZNY
+                                            </div>
+                                            <p class="font-bold">
+                                                STOP: 0x00002137 (BRAK_ZNAKU_KRZYZA_PRZED_MONITOREM)
+                                            </p>
+                                            <p class="text-blue-100">
+                                                Próbowano obsłużyć Komputer Kamila Steinbacha bez wcześniejszego przeżegnania się. Sterownik <span class="underline">sochafki_mono.sys</span> uległ stopieniu.
+                                            </p>
+                                        </div>
+                                        <div class="pt-2 border-t border-white/30 flex flex-wrap items-center justify-between gap-2">
+                                            <span class="text-yellow-300 font-bold">Naciśnij przycisk, aby zresetować</span>
+                                            <button onclick="steinbachReboot()" class="px-2.5 py-1 bg-white text-[#0000aa] font-black rounded hover:bg-[#00ffff]">
+                                                ⚡ RESETUJ PC
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- WARSTWA 5: WYŁĄCZONY MONITOR (PO KOPNIĘCIU LISTWY) -->
+                                    <div id="crt-view-off" class="hidden w-full h-full bg-[#090909] flex flex-col items-center justify-center p-4 text-center space-y-3">
+                                        <div class="text-neutral-500 font-mono text-xs sm:text-sm">
+                                            *cisza i charakterystyczne strzelanie plastiku CRT*
+                                        </div>
+                                        <button onclick="steinbachPowerOn()" class="px-5 py-2.5 bg-[#00ffff] hover:bg-white text-black font-black text-xs sm:text-sm rounded-xl shadow-[0_0_20px_rgba(0,255,255,0.4)] transition-transform active:scale-95">
+                                            ⚡ Włącz ponownie (BIOS Beep)
+                                        </button>
+                                    </div>
+
+                                </div>
+
+                                <!-- Dolny pasek obudowy monitora CRT (logo + dioda LED) -->
+                                <div class="mt-3 flex items-center justify-between px-2">
+                                    <span class="text-[11px] font-black tracking-widest uppercase text-[#5c5442] font-grotesk">
+                                        STEINBACH-TRON 15" CRT
+                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-4 h-2 rounded-sm bg-[#9c937a] border border-[#78705b]"></span>
+                                        <span class="w-4 h-2 rounded-sm bg-[#9c937a] border border-[#78705b]"></span>
+                                        <!-- Zielona dioda zasilania CRT -->
+                                        <span id="crt-power-led" class="w-3 h-3 rounded-full bg-green-400 shadow-[0_0_8px_#4ade80] border border-green-900"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Podstawka monitora CRT -->
+                            <div class="w-44 h-5 bg-gradient-to-b from-[#b2a88c] to-[#8a8068] rounded-b-2xl border-x-2 border-b-2 border-[#756c57]"></div>
+                            <div class="w-64 h-3 bg-[#9c9278] rounded-full shadow-lg"></div>
+                        </div>
+
+                        <!-- BEŻOWA OBUDOWA PC + PODPIĘTE SOCHAFKI (4 kolumny na desktopie) -->
+                        <div class="lg:col-span-4 flex flex-col items-center">
+                            <div id="pc-tower" class="crt-bezel w-full max-w-[240px] rounded-2xl p-4 border-2 border-[#a89e82] space-y-3 relative">
+                                <!-- Napęd CD-ROM -->
+                                <div class="bg-[#c7bfa5] border-2 border-[#948b72] rounded-lg p-2 space-y-1.5">
+                                    <div class="flex items-center justify-between text-[9px] font-black text-[#4d4637]">
+                                        <span>LG 52x MAX CD-ROM</span>
+                                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    </div>
+                                    <div class="h-2 bg-[#8c836a] rounded-sm"></div>
+                                    <div class="flex justify-end">
+                                        <span class="w-5 h-1.5 bg-[#9e957b] border border-[#6e6652] rounded-sm"></span>
+                                    </div>
+                                </div>
+
+                                <!-- Stacja dyskietek 3.5" -->
+                                <div class="bg-[#c7bfa5] border border-[#948b72] rounded-md p-1.5 flex items-center justify-between">
+                                    <div class="w-28 h-1.5 bg-[#333] rounded-full"></div>
+                                    <div class="w-3 h-2 bg-[#8f866d] rounded-sm"></div>
+                                </div>
+
+                                <!-- Naklejki z epoki -->
+                                <div class="flex items-center justify-center gap-2 py-1">
+                                    <span class="px-2 py-0.5 rounded bg-blue-700 text-white text-[9px] font-black">Intel Celeron</span>
+                                    <span class="px-2 py-0.5 rounded bg-black text-[#00ffff] border border-[#00ffff] text-[9px] font-black">Sochafki Ready</span>
+                                </div>
+
+                                <!-- Przycisk POWER + Diody -->
+                                <div class="flex items-center justify-between bg-[#bdb499] border border-[#948b72] rounded-xl p-3">
+                                    <button onclick="steinbachPowerOn()" class="w-10 h-10 rounded-full bg-[#e3dcc6] border-2 border-[#7d745e] shadow-inner flex items-center justify-center text-sm font-black text-[#3b3529] hover:bg-white active:scale-95 transition-transform" title="Przycisk POWER">
+                                        ⏻
+                                    </button>
+                                    <div class="space-y-1.5 text-[9px] font-black text-[#4d4637]">
+                                        <div class="flex items-center gap-1.5">
+                                            <span id="pc-power-led" class="w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_6px_#22c55e]"></span>
+                                            <span>PWR</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <span id="pc-hdd-led" class="w-2.5 h-2.5 rounded-full bg-red-600 hdd-busy"></span>
+                                            <span>HDD (Mieli)</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Kratka wentylacyjna + Podpięte Sochafki™ -->
+                                <div class="pt-1 flex items-center justify-between border-t border-[#9c9278]">
+                                    <div class="space-y-1">
+                                        <div class="text-[9px] font-black text-[#4d4637]">AUX (ZIELONE)</div>
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="w-3.5 h-3.5 rounded-full bg-lime-400 border-2 border-black flex items-center justify-center">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-black"></span>
+                                            </span>
+                                            <span class="text-[10px] font-black text-black bg-[#00ffff] px-1.5 py-0.5 rounded">🎧 Sochafki™</span>
+                                        </div>
+                                    </div>
+                                    <!-- Mini ilustracja zwisających Sochafek -->
+                                    <svg viewBox="0 0 64 54" class="w-14 h-12 shrink-0">
+                                        <path d="M 10 12 Q 2 35, 18 44" fill="none" stroke="#00ffff" stroke-width="2.5"/>
+                                        <path d="M 20 34 A 18 18 0 0 1 56 34" fill="none" stroke="#111" stroke-width="5" stroke-linecap="round"/>
+                                        <ellipse cx="20" cy="36" rx="6" ry="9" fill="#000" stroke="#00ffff" stroke-width="1.5"/>
+                                        <ellipse cx="56" cy="36" rx="6" ry="9" fill="#000" stroke="#e86f1c" stroke-width="1.5"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <p class="text-[11px] text-neutral-500 mt-2 text-center">
+                                *Obudowa drży, gdy odpalisz grę.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 4 INTERAKTYWNE PRZYCISKI AKCJI POD KOMPUTEREM -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4 border-t border-neutral-800">
+                        <button onclick="steinbachBless()" class="p-3.5 rounded-2xl bg-neutral-900 hover:bg-[#00ffff]/15 border-2 border-[#00ffff]/60 text-white font-black text-xs sm:text-sm transition-all active:scale-95 flex flex-col items-center gap-1 text-center">
+                            <span class="text-xl">✝️</span>
+                            <span>Przeżegnaj się przed monitorem</span>
+                        </button>
+
+                        <button onclick="steinbachShutdown()" class="p-3.5 rounded-2xl bg-neutral-900 hover:bg-blue-900/40 border border-blue-500/50 text-white font-black text-xs sm:text-sm transition-all active:scale-95 flex flex-col items-center gap-1 text-center">
+                            <span class="text-xl">🪟</span>
+                            <span>Start → Wyłącz komputer</span>
+                        </button>
+
+                        <button onclick="steinbachRunGame()" class="p-3.5 rounded-2xl bg-neutral-900 hover:bg-amber-900/40 border border-amber-500/50 text-white font-black text-xs sm:text-sm transition-all active:scale-95 flex flex-col items-center gap-1 text-center">
+                            <span class="text-xl">🎮</span>
+                            <span>Odpal CS 1.6 / GTA 4</span>
+                        </button>
+
+                        <button onclick="steinbachKickStrip()" class="p-3.5 rounded-2xl bg-red-950/70 hover:bg-red-900/80 border-2 border-red-500 text-red-100 font-black text-xs sm:text-sm transition-all active:scale-95 flex flex-col items-center gap-1 text-center">
+                            <span class="text-xl">🔴</span>
+                            <span>Kopnij listwę (Czerwony przycisk)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SPECYFIKACJA KOMPUTERA KAMILA STEINBACHA (6 kafelek) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-5 transition-all">
+                        <div class="text-xs font-black uppercase tracking-wider text-[#00ffff] mb-1">🔥 Procesor</div>
+                        <h3 class="text-lg font-black mb-1.5">Intel Celeron (Epoka Kamienia)</h3>
+                        <p class="text-sm text-neutral-400">Zastępuje grzejnik w pokoju podczas zimy. Przy otwarciu dwóch kart w Firefoxie osiąga temperaturę rdzenia Słońca.</p>
+                    </div>
+
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-5 transition-all">
+                        <div class="text-xs font-black uppercase tracking-wider text-[#00ffff] mb-1">🎞️ Karta graficzna</div>
+                        <h3 class="text-lg font-black mb-1.5">Zintegrowana 64 MB</h3>
+                        <p class="text-sm text-neutral-400">GTA 4 działa płynnie jako prezentacja w PowerPoincie (3 klatki na minutę przy wyłączonych cieniach i teksturach).</p>
+                    </div>
+
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-5 transition-all">
+                        <div class="text-xs font-black uppercase tracking-wider text-[#00ffff] mb-1">📺 Monitor</div>
+                        <h3 class="text-lg font-black mb-1.5">Beżowy CRT 15" (24 kg)</h3>
+                        <p class="text-sm text-neutral-400">24 kilogramy czystego promieniowania. Po wyłączeniu zasilania obudowa strzela i trzaska jeszcze przez pół godziny.</p>
+                    </div>
+
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-5 transition-all">
+                        <div class="text-xs font-black uppercase tracking-wider text-[#00ffff] mb-1">🎧 Karta dźwiękowa</div>
+                        <h3 class="text-lg font-black mb-1.5">Realtek AC'97</h3>
+                        <p class="text-sm text-neutral-400">Jedyna karta dźwiękowa oficjalnie certyfikowana pod Sochafki™ 144p. Generuje szum nawet wtedy, gdy komputer jest wyłączony.</p>
+                    </div>
+
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-5 transition-all">
+                        <div class="text-xs font-black uppercase tracking-wider text-[#00ffff] mb-1">⏳ Procedura zamykania</div>
+                        <h3 class="text-lg font-black mb-1.5">10 minut i 42 sekundy</h3>
+                        <p class="text-sm text-neutral-400">Wymagany znak krzyża przed kliknięciem Start. Alternatywna metoda awaryjna: szybkie kopnięcie czerwonego przycisku na listwie.</p>
+                    </div>
+
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-5 transition-all">
+                        <div class="text-xs font-black uppercase tracking-wider text-[#00ffff] mb-1">⚡ Zasilacz</div>
+                        <h3 class="text-lg font-black mb-1.5">Czarna Lista 230W</h3>
+                        <p class="text-sm text-neutral-400">Działa na słowo honoru, taśmę izolacyjną i modlitwę. Wentylator brzmi jak startujący samolot pasażerski z lotniska w Radomiu.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEKCJA 4: MINI-GRA ROZPLĄTYWANIA KABLA + BAZAROWY SOUNDBOARD -->
+        <section id="rozplatywanie" class="py-16 sm:py-24 px-4 sm:px-6 bg-neutral-950 border-b border-neutral-800">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                
+                <!-- MINI-GRA: SYMULATOR ROZPLĄTYWANIA KABLA SOCHAFEK -->
+                <div class="bg-black border-2 border-[#00ffff]/60 rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-5 shadow-[0_0_30px_rgba(0,255,255,0.1)]">
+                    <div class="space-y-2">
+                        <span class="text-[11px] font-black uppercase tracking-widest text-[#00ffff] bg-[#00ffff]/10 border border-[#00ffff]/30 px-2.5 py-1 rounded-full">
+                            Mini-Gra Syzyfowa
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-black tracking-tight">
+                            Symulator Rozplątywania Kabla™
+                        </h2>
+                        <p class="text-xs sm:text-sm text-neutral-400">
+                            Spróbuj zbić splątanie do 0%. Ostrzegamy: fizyka kwantowa kabla Sochafek nie wybacza.
+                        </p>
+                    </div>
+
+                    <!-- Licznik i pasek splątania -->
+                    <div class="bg-neutral-950 border border-neutral-800 rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between text-xs sm:text-sm font-black">
+                            <span>Poziom splątania:</span>
+                            <span id="tangle-percent-text" class="text-xl text-[#00ffff] font-mono">100%</span>
+                        </div>
+                        <div class="w-full h-4 bg-neutral-900 rounded-full overflow-hidden border border-neutral-700">
+                            <div id="tangle-bar" class="h-full bg-gradient-to-r from-[#00ffff] via-amber-400 to-red-600 transition-all duration-300" style="width: 15%"></div>
+                        </div>
+                        <div class="flex justify-between text-[11px] text-neutral-500 font-mono">
+                            <span>Próby rozplątania: <strong id="tangle-attempts" class="text-white">0</strong></span>
+                            <span>Limit: 999% (Czarna dziura)</span>
+                        </div>
+                    </div>
+
+                    <!-- Log wydarzeń z kabla -->
+                    <div id="tangle-log" class="bg-neutral-900/90 border border-neutral-800 rounded-2xl p-4 text-xs sm:text-sm text-neutral-200 min-h-[76px] flex items-center">
+                        🧶 Kabel wyciągnięty prosto z pudełka. Fabryczny supeł gotowy do walki!
+                    </div>
+
+                    <!-- Przyciski akcji -->
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button id="untangle-btn" onclick="tryUntangle()" class="flex-1 py-3.5 px-5 bg-[#00ffff] hover:bg-white text-black font-black text-sm rounded-2xl transition-all active:scale-95 shadow-[0_0_18px_rgba(0,255,255,0.35)]">
+                            🧶 Rozplącz kabel
+                        </button>
+                        <button onclick="giveUpUntangle()" class="py-3.5 px-4 bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 text-neutral-200 font-bold text-xs sm:text-sm rounded-2xl transition-all active:scale-95">
+                            ✂️ Poddaję się (Taśma)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BAZAROWY SOUNDBOARD SOCHAFEK (WEB AUDIO API) -->
+                <div id="soundboard" class="bg-black border-2 border-neutral-800 hover:border-[#00ffff]/50 rounded-3xl p-6 sm:p-7 flex flex-col justify-between space-y-5 transition-colors">
+                    <div class="space-y-2">
+                        <span class="text-[11px] font-black uppercase tracking-widest text-black bg-white px-2.5 py-1 rounded-full">
+                            Syntezator Web Audio API
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-black tracking-tight">
+                            Bazarowy Soundboard Sochafek™
+                        </h2>
+                        <p class="text-xs sm:text-sm text-neutral-400">
+                            Kultowe dźwięki generowane w czasie rzeczywistym (bez plików MP3, w bezpiecznej dla uszu głośności).
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 flex-1 items-stretch">
+                        <button onclick="playSoundboard('gsm')" class="p-4 rounded-2xl bg-neutral-950 hover:bg-[#00ffff]/15 border border-neutral-800 hover:border-[#00ffff] text-left transition-all active:scale-95 flex flex-col justify-between gap-2">
+                            <span class="text-2xl">📱</span>
+                            <div>
+                                <div class="font-black text-sm text-white">Zakłócenia GSM</div>
+                                <div class="text-[11px] text-[#00ffff] font-mono">ty-ty-ty-ty-bzzzt!</div>
+                                <div class="text-[11px] text-neutral-500 mt-1">Wiesz, że dostaniesz SMS-a 3 sekundy przed telefonem.</div>
+                            </div>
+                        </button>
+
+                        <button onclick="playSoundboard('feedback')" class="p-4 rounded-2xl bg-neutral-950 hover:bg-[#00ffff]/15 border border-neutral-800 hover:border-[#00ffff] text-left transition-all active:scale-95 flex flex-col justify-between gap-2">
+                            <span class="text-2xl">🎤</span>
+                            <div>
+                                <div class="font-black text-sm text-white">Sprzężenie mikrofonu</div>
+                                <div class="text-[11px] text-amber-400 font-mono">PISK 3kHz (Cichy)</div>
+                                <div class="text-[11px] text-neutral-500 mt-1">Klasyczny apel szkolny i Skype z kolegami z 2009 r.</div>
+                            </div>
+                        </button>
+
+                        <button onclick="playSoundboard('hum')" class="p-4 rounded-2xl bg-neutral-950 hover:bg-[#00ffff]/15 border border-neutral-800 hover:border-[#00ffff] text-left transition-all active:scale-95 flex flex-col justify-between gap-2">
+                            <span class="text-2xl">🔌</span>
+                            <div>
+                                <div class="font-black text-sm text-white">Wyciągnięty Jack</div>
+                                <div class="text-[11px] text-orange-400 font-mono">BRUM 50Hz</div>
+                                <div class="text-[11px] text-neutral-500 mt-1">Soczyste buczenie wtyczki dotykającej kaloryfera.</div>
+                            </div>
+                        </button>
+
+                        <button onclick="playSoundboard('pcstart')" class="p-4 rounded-2xl bg-neutral-950 hover:bg-[#00ffff]/15 border border-neutral-800 hover:border-[#00ffff] text-left transition-all active:scale-95 flex flex-col justify-between gap-2">
+                            <span class="text-2xl">🖥️</span>
+                            <div>
+                                <div class="font-black text-sm text-white">Start PC Steinbacha</div>
+                                <div class="text-[11px] text-green-400 font-mono">BIOS Beep + HDD + Wiatrak</div>
+                                <div class="text-[11px] text-neutral-500 mt-1">Symfonia budząca domowników o 2:00 w nocy.</div>
+                            </div>
+                        </button>
+                    </div>
+
+                    <div id="soundboard-status" class="text-xs font-mono text-neutral-400 bg-neutral-950 border border-neutral-800 rounded-xl px-3.5 py-2.5 text-center">
+                        Kliknij dowolny przycisk, aby poczuć nostalgię 144p 🔊
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEKCJA 5: ROZBUDOWANA SPECYFIKACJA AUDIOFILSKA (9 KART) -->
+        <section id="specyfikacja" class="py-16 sm:py-24 px-4 sm:px-6 border-b border-neutral-800">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12 space-y-3">
+                    <span class="text-xs font-black uppercase tracking-widest text-black bg-[#00ffff] px-3 py-1 rounded-full">
+                        Inżynieria na najwyższym poziomie
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-black tracking-tight">
+                        Specyfikacja Audiofilska
+                    </h2>
+                    <p class="text-neutral-400 max-w-xl mx-auto text-sm sm:text-base">
+                        Każdy komponent został dobrany w losowej fabryce, żeby dostarczyć niezapomnianych wrażeń słuchowych, ortopedycznych i estetycznych.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <!-- Karta 1 -->
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-6 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-[#00ffff]/10 border border-[#00ffff]/30 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            📈
+                        </div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#00ffff] mb-1">Pasmo przenoszenia</div>
+                        <h3 class="text-2xl font-black mb-2">12 Hz – 420 Hz</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed">
+                            Głównie szum, trzask i tajemnicze piski, gdy w pobliżu ktoś dostaje SMS-a. Wysokie tony zostały usunięte dla Twojego bezpieczeństwa.
+                        </p>
+                    </div>
+
+                    <!-- Karta 2 -->
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-6 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-[#00ffff]/10 border border-[#00ffff]/30 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            🧶
+                        </div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#00ffff] mb-1">Kabel Premium</div>
+                        <h3 class="text-2xl font-black mb-2">1,5 m (1,1 m supła)</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed">
+                            Wyposażony w opatentowany, fabryczny supeł gordyjski. Realna długość użytkowa to 40 cm — musisz trzymać głowę przy obudowie PC.
+                        </p>
+                    </div>
+
+                    <!-- Karta 3 -->
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-6 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-[#00ffff]/10 border border-[#00ffff]/30 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            🍪
+                        </div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#00ffff] mb-1">Gąbki nauszne</div>
+                        <h3 class="text-2xl font-black mb-2">Technologia „Krusz-Max”</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed">
+                            Ekskluzywna eko-skóra z 2008 roku. Po każdym 15-minutowym odsłuchu zostawia stylowe, czarne okruszki na uszach i szyi.
+                        </p>
+                    </div>
+
+                    <!-- Karta 4 -->
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-6 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-[#00ffff]/10 border border-[#00ffff]/30 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            🥔
+                        </div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#00ffff] mb-1">Kompatybilność</div>
+                        <h3 class="text-2xl font-black mb-2">Ziemniak, Nokia &amp; Szkoła</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed">
+                            Działa bezproblemowo z ziemniakiem, starą Nokią z polifonią, Komputerem Kamila Steinbacha oraz każdą salą informatyczną.
+                        </p>
+                    </div>
+
+                    <!-- Karta 5 -->
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-6 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-[#00ffff]/10 border border-[#00ffff]/30 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            🔌
+                        </div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#00ffff] mb-1">Złącze Jack 3.5mm</div>
+                        <h3 class="text-2xl font-black mb-2">Ergonomiczny Banan 47°</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed">
+                            Fabrycznie lekko skrzywiona wtyczka, która wymaga owinięcia kabla wokół telefonu dokładnie dwa i pół razy, aby uzyskać stereo.
+                        </p>
+                    </div>
+
+                    <!-- Karta 6 -->
+                    <div class="bg-neutral-950 border border-neutral-800 hover:border-[#00ffff] rounded-2xl p-6 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-[#00ffff]/10 border border-[#00ffff]/30 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            🔇
+                        </div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#00ffff] mb-1">Izolacja akustyczna</div>
+                        <h3 class="text-2xl font-black mb-2">System „Otwarte Okno”</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed">
+                            Cały autobus słyszy Twoją playlistę wyraźniej niż Ty sam. Idealne do dzielenia się gustem muzycznym w komunikacji miejskiej.
+                        </p>
+                    </div>
+
+                    <!-- NOWA Karta 7: Mikrofon -->
+                    <div class="bg-neutral-950 border border-[#00ffff]/40 hover:border-[#00ffff] rounded-2xl p-6 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-[#00ffff]/15 border border-[#00ffff]/40 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            🎙️
+                        </div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#00ffff] mb-1">Mikrofon na pałąku</div>
+                        <h3 class="text-2xl font-black mb-2">„Odkurzacz 3000”</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed">
+                            Zbiera mamę wołającą na obiad z drugiego pokoju, Twój oddech jak Darth Vader oraz wiertarkę sąsiada z 4. piętra — ale nie Twój głos.
+                        </p>
+                    </div>
+
+                    <!-- NOWA Karta 8: Pałąk -->
+                    <div class="bg-neutral-950 border border-[#00ffff]/40 hover:border-[#00ffff] rounded-2xl p-6 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-[#00ffff]/15 border border-[#00ffff]/40 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            🗜️
+                        </div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#00ffff] mb-1">Ergonomia pałąka</div>
+                        <h3 class="text-2xl font-black mb-2">„Imadło Czaszki™”</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed">
+                            Po 20 minutach noszenia głowa przyjmuje aerodynamiczny kształt sześcianu. Fabrycznie wzmocniony czarną taśmą izolacyjną w miejscu pęknięcia.
+                        </p>
+                    </div>
+
+                    <!-- NOWA Karta 9: Wodoodporność -->
+                    <div class="bg-neutral-950 border border-[#00ffff]/40 hover:border-[#00ffff] rounded-2xl p-6 transition-all group">
+                        <div class="w-12 h-12 rounded-xl bg-[#00ffff]/15 border border-[#00ffff]/40 flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform">
+                            ⛈️
+                        </div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-[#00ffff] mb-1">Wodoodporność</div>
+                        <h3 class="text-2xl font-black mb-2">IP00 (Byle nie padało)</h3>
+                        <p class="text-sm text-neutral-400 leading-relaxed">
+                            Jedna kropla deszczu natychmiast przełącza tryb mono w widowiskowy tryb „Sylwestrowe Fajerwerki”. Nie używać przy parującej herbacie.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEKCJA 6: TABELA PORÓWNAWCZA SOCHAFKI VS PREMIUM -->
+        <section class="py-16 sm:py-20 px-4 sm:px-6 bg-neutral-950 border-b border-neutral-800">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-10 space-y-3">
+                    <span class="text-xs font-black uppercase tracking-widest text-[#00ffff] bg-[#00ffff]/10 border border-[#00ffff]/30 px-3 py-1 rounded-full">
+                        Bezlitosne fakty
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-black tracking-tight">
+                        Dlaczego przepłacać za „markowe”?
+                    </h2>
+                </div>
+
+                <div class="overflow-x-auto rounded-3xl border-2 border-[#00ffff]/50 bg-black shadow-[0_0_30px_rgba(0,255,255,0.12)]">
+                    <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                        <thead>
+                            <tr class="border-b border-neutral-800 bg-neutral-900/80">
+                                <th class="p-4 font-black text-neutral-400 uppercase tracking-wider">Cecha</th>
+                                <th class="p-4 font-black text-black bg-[#00ffff] text-center">Sochafki™ (4,99 zł)</th>
+                                <th class="p-4 font-bold text-neutral-400 text-center">Słuchawki Premium (2 499 zł)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-neutral-800/80">
+                            <tr class="hover:bg-neutral-900/40">
+                                <td class="p-4 font-bold text-neutral-200">Fabryczny supeł na kablu</td>
+                                <td class="p-4 text-center font-black text-[#00ffff]">✅ TAK (w cenie)</td>
+                                <td class="p-4 text-center text-neutral-500">❌ Brak (nuda)</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/40">
+                                <td class="p-4 font-bold text-neutral-200">Czarne okruszki na uszach</td>
+                                <td class="p-4 text-center font-black text-[#00ffff]">✅ Krusz-Max™</td>
+                                <td class="p-4 text-center text-neutral-500">❌ Zwykły welur</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/40">
+                                <td class="p-4 font-bold text-neutral-200">Działają jak przekrzywisz głowę</td>
+                                <td class="p-4 text-center font-black text-[#00ffff]">✅ Ćwiczy kark!</td>
+                                <td class="p-4 text-center text-neutral-500">❌ Grają zawsze</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/40">
+                                <td class="p-4 font-bold text-neutral-200">Certyfikat Kamila Steinbacha</td>
+                                <td class="p-4 text-center font-black text-[#00ffff]">✅ 100% Realtek AC'97</td>
+                                <td class="p-4 text-center text-neutral-500">❌ Wymagają USB-C</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/40">
+                                <td class="p-4 font-bold text-neutral-200">Gwarancja</td>
+                                <td class="p-4 text-center font-black text-[#00ffff]">✅ Do bramy bazaru</td>
+                                <td class="p-4 text-center text-neutral-500">2 lata (papierologia)</td>
+                            </tr>
+                            <tr class="hover:bg-neutral-900/40">
+                                <td class="p-4 font-bold text-neutral-200">Zasięg kabla po rozplątaniu</td>
+                                <td class="p-4 text-center font-black text-[#00ffff]">✅ 40 cm (bliskość z PC)</td>
+                                <td class="p-4 text-center text-neutral-500">Bluetooth 10 m (bez duszy)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEKCJA 7: OPINIE AUDIOFILÓW (6 OPINII W TYM KAMIL STEINBACH) -->
+        <section id="opinie" class="py-16 sm:py-24 px-4 sm:px-6 border-b border-neutral-800">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12 space-y-3">
+                    <span class="text-xs font-black uppercase tracking-widest text-[#00ffff] bg-[#00ffff]/10 border border-[#00ffff]/30 px-3 py-1 rounded-full">
+                        Zweryfikowane zakupy na bazarze
+                    </span>
+                    <h2 class="text-3xl sm:text-5xl font-black tracking-tight">
+                        Opinie Audiofilów
+                    </h2>
+                    <p class="text-neutral-400 text-sm sm:text-base">
+                        Średnia ocena: <strong class="text-[#00ffff]">4.9 / 5</strong> (na podstawie 144 recenzji napisanych w Notatniku)
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- NOWA WYRÓŻNIONA OPINIA: KAMIL STEINBACH -->
+                    <article class="bg-neutral-950 border-2 border-[#00ffff] rounded-2xl p-6 flex flex-col justify-between space-y-4 shadow-[0_0_25px_rgba(0,255,255,0.18)]">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-yellow-400 text-sm tracking-widest">★★★★★</span>
+                                <span class="text-[10px] font-black uppercase bg-[#00ffff] text-black px-2 py-0.5 rounded-full">Legenda YouTube</span>
+                            </div>
+                            <p class="text-white text-sm leading-relaxed font-medium">
+                                „Podłączyłem do mojego komputera z Windows XP, przeżegnałem się przed monitorem i w CS-ie w końcu słyszę jak mi wentylator wyje w 144p. Zamykam system od 10 minut, 10/10.”
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-3 border-t border-neutral-800">
+                            <div class="w-10 h-10 rounded-full bg-[#00ffff] text-black font-black flex items-center justify-center shrink-0">KS</div>
+                            <div>
+                                <div class="font-black text-sm text-[#00ffff]">Kamil Steinbach ✓</div>
+                                <div class="text-xs text-neutral-400">Zweryfikowany ekspert wyłączania PC</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Opinia 1 (oryginał) -->
+                    <article class="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-yellow-400 text-sm tracking-widest">★★★★★</span>
+                                <span class="text-xs text-neutral-500">2 dni temu</span>
+                            </div>
+                            <p class="text-neutral-200 text-sm leading-relaxed">
+                                „Kupiłem wczoraj, dzisiaj lewa już nie działa, a prawa gra tylko jak trzymam głowę przechyloną w stronę okna. 10/10, dokładnie taki klimat jak w kafejce internetowej w 2007 roku. Polecam każdemu koneserowi.”
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-3 border-t border-neutral-900">
+                            <div class="w-10 h-10 rounded-full bg-[#00ffff] text-black font-black flex items-center justify-center shrink-0">KB</div>
+                            <div>
+                                <div class="font-bold text-sm">Kamil_Bazar_Audio</div>
+                                <div class="text-xs text-neutral-500">Posiadacz wariantu „Tylko lewa”</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Opinia 2 (oryginał) -->
+                    <article class="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-yellow-400 text-sm tracking-widest">★★★★★</span>
+                                <span class="text-xs text-neutral-500">tydzień temu</span>
+                            </div>
+                            <p class="text-neutral-200 text-sm leading-relaxed">
+                                „Technologia Krusz-Max robi robotę! Po dwóch godzinach grania w CS-a wyglądałem, jakbym miał uszy posypane pieprzem. Dźwięk ma taką głębię, że słyszę kroki z sąsiedniego serwera (albo to tylko trzask kabla).”
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-3 border-t border-neutral-900">
+                            <div class="w-10 h-10 rounded-full bg-white text-black font-black flex items-center justify-center shrink-0">MS</div>
+                            <div>
+                                <div class="font-bold text-sm">Marek_Sala_Informatyczna</div>
+                                <div class="text-xs text-neutral-500">Audiofil z 30-letnim stażem na Winampie</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- NOWA OPINIA: Informatyk ze szkolnej sali -->
+                    <article class="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-yellow-400 text-sm tracking-widest">★★★★★</span>
+                                <span class="text-xs text-neutral-500">4 dni temu</span>
+                            </div>
+                            <p class="text-neutral-200 text-sm leading-relaxed">
+                                „Zamówiłem 18 par do pracowni komputerowej nr 24. Uczniowie w końcu nie grają w gry, bo przez 45 minut lekcji próbują rozplątać kabel i znaleźć styk w gnieździe. Najlepszy wydatek z budżetu szkoły!”
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-3 border-t border-neutral-900">
+                            <div class="w-10 h-10 rounded-full bg-amber-400 text-black font-black flex items-center justify-center shrink-0">PI</div>
+                            <div>
+                                <div class="font-bold text-sm">Pan_Zbigniew_Informatyka</div>
+                                <div class="text-xs text-neutral-500">Opiekun pracowni (Windows 7 + Paint)</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Opinia 3 (oryginał) -->
+                    <article class="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-yellow-400 text-sm tracking-widest">★★★★☆</span>
+                                <span class="text-xs text-neutral-500">3 tygodnie temu</span>
+                            </div>
+                            <p class="text-neutral-200 text-sm leading-relaxed">
+                                „Daję 4 gwiazdki, bo przez przypadek udało mi się rozplątać kabel i straciły swój fabryczny urok. Na szczęście po włożeniu do kieszeni na 3 sekundy supeł wrócił mocniejszy niż wcześniej. Brawo dla inżynierów!”
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-3 border-t border-neutral-900">
+                            <div class="w-10 h-10 rounded-full bg-neutral-800 text-[#00ffff] border border-[#00ffff] font-black flex items-center justify-center shrink-0">DZ</div>
+                            <div>
+                                <div class="font-bold text-sm">DJ_Ziemniak_144p</div>
+                                <div class="text-xs text-neutral-500">Producent muzyczny (FL Studio Demo)</div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Opinia 4 (oryginał) -->
+                    <article class="bg-neutral-950 border border-neutral-800 rounded-2xl p-6 flex flex-col justify-between space-y-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-yellow-400 text-sm tracking-widest">★★★★★</span>
+                                <span class="text-xs text-neutral-500">wczoraj</span>
+                            </div>
+                            <p class="text-neutral-200 text-sm leading-relaxed">
+                                „Przesyłka gołębiem dotarła w 12 minut, choć gołąb zabrał mi kanapkę. Sochafki podpięte do ziemniaka zagrały „Barkę” w mono z lekkim przesterem. Łezka się w oku kręci, sprzęt wart każdej złotówki z tych 4,99 zł.”
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-3 border-t border-neutral-900">
+                            <div class="w-10 h-10 rounded-full bg-[#00ffff]/20 text-[#00ffff] font-black flex items-center justify-center shrink-0">AK</div>
+                            <div>
+                                <div class="font-bold text-sm">Audiofil_Na_Kredyt</div>
+                                <div class="text-xs text-neutral-500">Koneser przesterów i niskiego bitrate'u</div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEKCJA 8: FAQ AUDIOFILA (ROZWIJANE AKORDEONY) -->
+        <section id="faq" class="py-16 sm:py-24 px-4 sm:px-6 bg-neutral-950 border-b border-neutral-800">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-10 space-y-3">
+                    <span class="text-xs font-black uppercase tracking-widest text-[#00ffff] bg-[#00ffff]/10 border border-[#00ffff]/30 px-3 py-1 rounded-full">
+                        Centrum Pomocy (Nieczynne)
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-black tracking-tight">
+                        FAQ Audiofila
+                    </h2>
+                </div>
+
+                <div class="space-y-3" id="faq-list">
+                    <!-- Pytanie 1 -->
+                    <div class="bg-black border border-neutral-800 rounded-2xl overflow-hidden">
+                        <button onclick="toggleFaq(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base hover:text-[#00ffff] transition-colors">
+                            <span>Co zrobić, jeśli nagle zaczęły działać OBIE słuchawki?</span>
+                            <span class="faq-icon text-[#00ffff] font-black text-xl transition-transform">+</span>
+                        </button>
+                        <div class="faq-content max-h-0 opacity-0 overflow-hidden">
+                            <div class="px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900 pt-3">
+                                Bez paniki — to rzadka usterka fabryczna. Zalecamy natychmiastowe wstrzymanie oddechu, znieruchomienie na krześle lub delikatne puknięcie wtyczki Jack 3.5mm. Po 3 sekundach prawa słuchawka powinna bezpiecznie wrócić do stanu permanentnej ciszy.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pytanie 2 -->
+                    <div class="bg-black border border-neutral-800 rounded-2xl overflow-hidden">
+                        <button onclick="toggleFaq(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base hover:text-[#00ffff] transition-colors">
+                            <span>Czy Sochafki są kompatybilne z Komputerem Kamila Steinbacha?</span>
+                            <span class="faq-icon text-[#00ffff] font-black text-xl transition-transform">+</span>
+                        </button>
+                        <div class="faq-content max-h-0 opacity-0 overflow-hidden">
+                            <div class="px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900 pt-3">
+                                Tak! Sochafki™ posiadają oficjalny certyfikat <strong class="text-[#00ffff]">Realtek AC'97 Ready</strong>. Pamiętaj jednak, aby przed włożeniem wtyczki do zielonego gniazda przeżegnać się przed monitorem CRT — w przeciwnym razie Windows XP może wyświetlić Blue Screen.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pytanie 3 -->
+                    <div class="bg-black border border-neutral-800 rounded-2xl overflow-hidden">
+                        <button onclick="toggleFaq(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base hover:text-[#00ffff] transition-colors">
+                            <span>Dlaczego słyszę lokalną stację radiową, gdy dotknę kabla łokciem?</span>
+                            <span class="faq-icon text-[#00ffff] font-black text-xl transition-transform">+</span>
+                        </button>
+                        <div class="faq-content max-h-0 opacity-0 overflow-hidden">
+                            <div class="px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900 pt-3">
+                                To nie błąd, to darmowa funkcja <strong class="text-white">Radio-Łokieć FM™</strong>. Dzięki całkowitemu brakowi ekranowania miedzianego, kabel Sochafek działa jak antena dalekiego zasięgu. W bezchmurne noce możesz odebrać nawet prognozę pogody dla statków na Bałtyku.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pytanie 4 -->
+                    <div class="bg-black border border-neutral-800 rounded-2xl overflow-hidden">
+                        <button onclick="toggleFaq(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base hover:text-[#00ffff] transition-colors">
+                            <span>Jak zmyć czarne okruszki Krusz-Max z uszu przed wywiadówką?</span>
+                            <span class="faq-icon text-[#00ffff] font-black text-xl transition-transform">+</span>
+                        </button>
+                        <div class="faq-content max-h-0 opacity-0 overflow-hidden">
+                            <div class="px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900 pt-3">
+                                Okruszki z eko-skóry z 2008 roku mają strukturę magnetyczną i lubią przywierać do policzków. Najlepiej użyć rolki do ubrań albo po prostu powiedzieć, że to „audiofilski brokat”. Jeśli gąbki całkowicie się wykruszą, możesz dokupić u nas zapasowy słoik 50g za 0,99 zł!
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pytanie 5 -->
+                    <div class="bg-black border border-neutral-800 rounded-2xl overflow-hidden">
+                        <button onclick="toggleFaq(this)" class="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm sm:text-base hover:text-[#00ffff] transition-colors">
+                            <span>Czy gwarancja „do bramy” obejmuje również furtkę?</span>
+                            <span class="faq-icon text-[#00ffff] font-black text-xl transition-transform">+</span>
+                        </button>
+                        <div class="faq-content max-h-0 opacity-0 overflow-hidden">
+                            <div class="px-5 pb-5 text-xs sm:text-sm text-neutral-400 leading-relaxed border-t border-neutral-900 pt-3">
+                                Gwarancja kończy się w momencie, gdy kurier Gołąb Pocztowy Express™ straci Cię z pola widzenia. W razie reklamacji prosimy o wysłanie faksu do naszej piwnicy w godzinach 03:12 – 03:14.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEKCJA KOŃCOWA CTA + STOPKA -->
+        <footer class="py-16 px-4 sm:px-6 text-center">
+            <div class="max-w-2xl mx-auto space-y-6">
+                <h2 class="text-3xl sm:text-4xl font-black">
+                    Gotowy na dźwięk, którego nie zapomnisz?
+                </h2>
+                <p class="text-neutral-400 text-sm sm:text-base">
+                    Zamów swoje <strong class="text-white">Sochafki™</strong> lub epicki <strong class="text-[#00ffff]">Zestaw Legend z Komputerem Kamila Steinbacha</strong> zanim skończy się taśma izolacyjna w magazynie.
+                </p>
+                <button onclick="openBuyModal()" class="px-8 py-4 bg-[#00ffff] hover:bg-white text-black font-black text-lg rounded-2xl shadow-[0_0_30px_rgba(0,255,255,0.45)] transition-transform hover:-translate-y-1 active:scale-95">
+                    ZAMÓW SOCHAFKI (od 4,99 zł) 🎧
+                </button>
+                <div class="pt-8 border-t border-neutral-900 text-xs text-neutral-600 space-y-1">
+                    <p>© 2006–2026 Sochafki™ Audio Corporation &amp; Steinbach-Tron Labs. Wszelkie trzaski zastrzeżone.</p>
+                    <p>Strona parodystyczna w klimacie polskich memów. Żadne prawdziwe słuchawki ani monitory CRT nie ucierpiały.</p>
+                </div>
+            </div>
+        </footer>
+
+    </div> <!-- Koniec #fry-container -->
+
+    <!-- FAŁSZYWY KOSZYK / MODAL „KUP TERAZ” (poza #fry-container dla czytelności) -->
+    <div id="buy-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/85 backdrop-blur-sm overflow-y-auto">
+        <div class="bg-neutral-950 border-2 border-[#00ffff] rounded-3xl max-w-md w-full p-5 sm:p-7 shadow-[0_0_50px_rgba(0,255,255,0.35)] relative my-auto">
+            <!-- Przycisk zamknięcia -->
+            <button onclick="closeBuyModal()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-neutral-900 hover:bg-neutral-800 text-neutral-300 font-bold flex items-center justify-center" aria-label="Zamknij okno">
+                ✕
+            </button>
+
+            <!-- KROK 1: Wybór wariantu -->
+            <div id="modal-step-select" class="space-y-4">
+                <div>
+                    <span class="text-[11px] font-black uppercase tracking-widest text-[#00ffff]">Konfigurator Audiofila</span>
+                    <h3 class="text-2xl font-black mt-1">Wybierz swoje Sochafki™</h3>
+                </div>
+
+                <div class="space-y-2.5 max-h-[42vh] overflow-y-auto pr-1" id="variant-list">
+                    <label class="flex items-start gap-3 p-3 rounded-2xl border-2 border-[#00ffff] bg-[#00ffff]/10 cursor-pointer transition-all">
+                        <input type="radio" name="sochafki-variant" value="Tylko lewa działa" data-price="4.99" checked class="mt-1 accent-[#00ffff]">
+                        <div class="flex-1">
+                            <div class="flex justify-between font-bold text-sm">
+                                <span>Tylko lewa działa</span>
+                                <span class="text-[#00ffff]">4,99 zł</span>
+                            </div>
+                            <p class="text-xs text-neutral-400 mt-0.5">Klasyk. Prawa służy jako stylowa ozdoba na ucho.</p>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-2xl border border-neutral-800 hover:border-neutral-600 bg-black cursor-pointer transition-all">
+                        <input type="radio" name="sochafki-variant" value="Tylko prawa działa" data-price="4.99" class="mt-1 accent-[#00ffff]">
+                        <div class="flex-1">
+                            <div class="flex justify-between font-bold text-sm">
+                                <span>Tylko prawa działa</span>
+                                <span class="text-[#00ffff]">4,99 zł</span>
+                            </div>
+                            <p class="text-xs text-neutral-400 mt-0.5">Edycja limitowana dla osób śpiących na lewym boku.</p>
+                        </div>
+                    </label>
+
+                    <label class="flex items-start gap-3 p-3 rounded-2xl border border-neutral-800 hover:border-neutral-600 bg-black cursor-pointer transition-all">
+                        <input type="radio" name="sochafki-variant" value="Z wtyczką wygiętą w banana" data-price="5.49" class="mt-1 accent-[#00ffff]">
+                        <div class="flex-1">
+                            <div class="flex justify-between font-bold text-sm">
+                                <span>Z wtyczką wygiętą w banana</span>
+                                <span class="text-[#00ffff]">5,49 zł</span>
+                            </div>
+                            <p class="text-xs text-neutral-400 mt-0.5">Pre-bent 47° dla maksymalnej loterii stereo.</p>
+                        </div>
+                    </label>
+
+                    <!-- NOWY EPICKI PAKIET: ZESTAW LEGEND -->
+                    <label class="flex items-start gap-3 p-3 rounded-2xl border border-amber-400/60 hover:border-[#00ffff] bg-amber-950/20 cursor-pointer transition-all">
+                        <input type="radio" name="sochafki-variant" value="ZESTAW LEGEND: Sochafki + Komputer Kamila Steinbacha" data-price="21.37" class="mt-1 accent-[#00ffff]">
+                        <div class="flex-1">
+                            <div class="flex justify-between items-center gap-2 font-black text-sm">
+                                <span class="text-amber-300">🔥 ZESTAW LEGEND: Sochafki + Komputer Kamila Steinbacha</span>
+                                <span class="text-[#00ffff] shrink-0">21,37 zł</span>
+                            </div>
+                            <p class="text-xs text-neutral-300 mt-0.5">Monitor CRT 24 kg + Windows XP + płyta z poradnikiem (bez gwarancji wyłączenia).</p>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Dodatki -->
+                <div class="space-y-2">
+                    <label class="flex items-center justify-between p-2.5 rounded-xl bg-neutral-900 border border-neutral-800 cursor-pointer text-xs sm:text-sm">
+                        <span class="flex items-center gap-2 font-semibold">
+                            <input type="checkbox" id="extra-tape" class="accent-[#00ffff] w-4 h-4">
+                            <span>Dodaj zapasową taśmę izolacyjną</span>
+                        </span>
+                        <span class="font-bold text-[#00ffff]">+0,50 zł</span>
+                    </label>
+
+                    <label class="flex items-center justify-between p-2.5 rounded-xl bg-neutral-900 border border-neutral-800 cursor-pointer text-xs sm:text-sm">
+                        <span class="flex items-center gap-2 font-semibold">
+                            <input type="checkbox" id="extra-crumbs" class="accent-[#00ffff] w-4 h-4">
+                            <span>Zapasowe okruszki Krusz-Max (słoik 50g)</span>
+                        </span>
+                        <span class="font-bold text-[#00ffff]">+0,99 zł</span>
+                    </label>
+                </div>
+
+                <!-- Podsumowanie i przycisk -->
+                <div class="pt-3 border-t border-neutral-800 flex items-center justify-between">
+                    <div>
+                        <div class="text-xs text-neutral-400">Razem do zapłaty:</div>
+                        <div id="modal-total-price" class="text-2xl font-black text-white">4,99 zł</div>
+                    </div>
+                    <button onclick="completeOrder()" class="px-6 py-3.5 bg-[#00ffff] hover:bg-white text-black font-black rounded-2xl transition-all active:scale-95 shadow-[0_0_20px_rgba(0,255,255,0.4)]">
+                        ZAMAWIAM! 🕊️
+                    </button>
+                </div>
+            </div>
+
+            <!-- KROK 2: Potwierdzenie wysyłki gołębiem pocztowym -->
+            <div id="modal-step-success" class="hidden text-center space-y-5 py-2">
+                <div class="text-6xl animate-bounce">🕊️</div>
+                <div class="space-y-2">
+                    <span class="inline-block bg-[#00ffff] text-black text-xs font-black px-3 py-1 rounded-full">
+                        ZAMÓWIENIE PRZYJĘTE!
+                    </span>
+                    <h3 class="text-2xl font-black">Gołąb już wystartował!</h3>
+                    <p id="order-summary-text" class="text-sm text-neutral-300 leading-relaxed">
+                        Twoje Sochafki zostały zapakowane w reklamówkę z dyskontu i przekazane kurierowi Gołąb Pocztowy Express™.
+                    </p>
+                </div>
+
+                <div class="bg-black border border-neutral-800 rounded-2xl p-4 text-left text-xs space-y-1.5 font-mono">
+                    <div class="flex justify-between">
+                        <span class="text-neutral-500">Nr przesyłki:</span>
+                        <span class="text-[#00ffff] font-bold">SOCH-144P-2137</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-neutral-500">Status:</span>
+                        <span class="text-green-400 font-bold">Leć, Staszek, leć!</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-neutral-500">Szacowany czas:</span>
+                        <span class="text-white">Jak znajdzie okruszki</span>
+                    </div>
+                </div>
+
+                <button onclick="closeBuyModal()" class="w-full py-3.5 bg-white hover:bg-[#00ffff] text-black font-black rounded-2xl transition-colors">
+                    SUPER, CZEKAM PRZY OKNIE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* =====================================================================
+           WSPÓLNY SILNIK WEB AUDIO API (BEZPIECZNE TWORZENIE I WZNAWIANIE)
+           ===================================================================== */
+        let audioCtx = null;
+
+        function ensureAudioCtx() {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            if (!audioCtx) {
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function toggleMobileNav() {
+            document.getElementById('mobile-nav').classList.toggle('hidden');
+        }
+
+        /* =====================================================================
+           1. GENERATOR GRAFIKI MEMA „SOCHAFKI” NA CANVAS (BEZ ZEWNĘTRZNYCH OBRAZKÓW)
+           ===================================================================== */
+        const memeCanvas = document.getElementById('sochafki-meme-canvas');
+        const memeCtx = memeCanvas.getContext('2d');
+        let extraClickFry = 0;
+
+        function drawSochafkiMeme(fryPercent) {
+            const effectiveFry = Math.min(100, fryPercent + extraClickFry);
+            const scale = Math.max(0.22, 1 - (effectiveFry / 100) * 0.72);
+            const w = Math.floor(420 * scale);
+            const h = Math.floor(460 * scale);
+
+            memeCanvas.width = w;
+            memeCanvas.height = h;
+
+            const ctx = memeCtx;
+            ctx.save();
+            ctx.scale(scale, scale);
+
+            // 1. Białe tło górnego paska mema
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, 420, 96);
+
+            // Napis „Sochafki”
+            ctx.fillStyle = '#080808';
+            ctx.font = '900 44px "Inter", Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('Sochafki', 210, 50);
+
+            if (effectiveFry > 20) {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+                for (let i = 0; i < 24; i++) {
+                    const ax = 105 + Math.random() * 210;
+                    const ay = 20 + Math.random() * 55;
+                    ctx.fillRect(ax, ay, 4, 4);
+                }
+            }
+
+            // 2. Jaskrawocyjanowe tło mema (#00ffff)
+            ctx.fillStyle = '#00ffff';
+            ctx.fillRect(0, 96, 420, 364);
+
+            // Ciemny cień w lewym górnym rogu
+            ctx.fillStyle = '#050505';
+            ctx.beginPath();
+            ctx.moveTo(0, 120);
+            ctx.lineTo(190, 96);
+            ctx.lineTo(230, 118);
+            ctx.lineTo(0, 185);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = '#cc5500';
+            ctx.fillRect(0, 96, 80, 12);
+            ctx.fillRect(150, 96, 65, 15);
+
+            // 3. Pałąk słuchawek
+            ctx.save();
+            ctx.strokeStyle = '#050505';
+            ctx.lineWidth = 34;
+            ctx.beginPath();
+            ctx.arc(205, 275, 155, Math.PI * 0.28, Math.PI * 1.25);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 14;
+            ctx.beginPath();
+            ctx.arc(205, 275, 162, Math.PI * 0.55, Math.PI * 0.92);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#d9480f';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.arc(205, 275, 154, Math.PI * 0.58, Math.PI * 0.78);
+            ctx.stroke();
+            ctx.restore();
+
+            // 4. Chaotyczna plątanina kabli
+            const cables = [
+                { cp1x: 160, cp1y: 320, cp2x: 240, cp2y: 380, ex: 340, ey: 320, color: '#000000', w: 9 },
+                { cp1x: 190, cp1y: 350, cp2x: 290, cp2y: 310, ex: 370, ey: 390, color: '#111111', w: 8 },
+                { cp1x: 175, cp1y: 290, cp2x: 250, cp2y: 410, ex: 310, ey: 440, color: '#ffffff', w: 5 },
+                { cp1x: 210, cp1y: 300, cp2x: 150, cp2y: 390, ex: 350, ey: 360, color: '#000000', w: 7 },
+                { cp1x: 240, cp1y: 260, cp2x: 330, cp2y: 410, ex: 260, ey: 455, color: '#ffffff', w: 4 },
+                { cp1x: 200, cp1y: 270, cp2x: 310, cp2y: 290, ex: 395, ey: 250, color: '#000000', w: 6 }
+            ];
+            cables.forEach(c => {
+                ctx.beginPath();
+                ctx.moveTo(215, 225);
+                ctx.bezierCurveTo(c.cp1x, c.cp1y, c.cp2x, c.cp2y, c.ex, c.ey);
+                ctx.strokeStyle = c.color;
+                ctx.lineWidth = c.w;
+                ctx.lineCap = 'round';
+                ctx.stroke();
+            });
+
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.moveTo(280, 460);
+            ctx.lineTo(420, 320);
+            ctx.lineTo(420, 460);
+            ctx.closePath();
+            ctx.fill();
+
+            // 5. Lewy nausznik
+            ctx.save();
+            ctx.translate(185, 195);
+            ctx.rotate(-0.2);
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 52, 58, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            const grad = ctx.createRadialGradient(-12, -10, 5, 0, 0, 50);
+            grad.addColorStop(0, '#ffffff');
+            grad.addColorStop(0.35, '#e86f1c');
+            grad.addColorStop(0.7, '#6b2000');
+            grad.addColorStop(1, '#000000');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.ellipse(-4, -2, 42, 48, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // 6. Prawy nausznik
+            ctx.save();
+            ctx.translate(295, 215);
+            ctx.rotate(0.15);
+            ctx.fillStyle = '#000000';
+            ctx.beginPath();
+            ctx.ellipse(14, 0, 44, 58, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.ellipse(-10, -2, 34, 56, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#111111';
+            ctx.beginPath();
+            ctx.ellipse(-18, 0, 6, 20, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            ctx.restore();
+
+            // 7. Algorytmiczne usmażenie pikseli
+            if (effectiveFry > 10) {
+                try {
+                    const imgData = ctx.getImageData(0, 0, w, h);
+                    const data = imgData.data;
+                    const contrast = 1 + (effectiveFry / 100) * 1.9;
+                    const noiseAmt = (effectiveFry / 100) * 55;
+
+                    for (let i = 0; i < data.length; i += 4) {
+                        let r = ((data[i] - 128) * contrast) + 128;
+                        let g = ((data[i + 1] - 128) * contrast) + 128;
+                        let b = ((data[i + 2] - 128) * contrast) + 128;
+
+                        if (Math.random() < 0.25) {
+                            const n = (Math.random() - 0.5) * noiseAmt;
+                            r += n;
+                            g += n;
+                            b += n;
+                        }
+
+                        if (effectiveFry > 55) {
+                            const step = effectiveFry > 85 ? 85 : 51;
+                            r = Math.round(r / step) * step;
+                            g = Math.round(g / step) * step;
+                            b = Math.round(b / step) * step;
+                        }
+
+                        data[i] = Math.max(0, Math.min(255, r));
+                        data[i + 1] = Math.max(0, Math.min(255, g));
+                        data[i + 2] = Math.max(0, Math.min(255, b));
+                    }
+                    ctx.putImageData(imgData, 0, 0);
+                } catch (e) {
+                    console.warn('Błąd filtrowania canvas:', e);
+                }
+            }
+        }
+
+        document.getElementById('meme-card').addEventListener('click', () => {
+            extraClickFry = (extraClickFry + 20) % 80;
+            const currentSlider = parseInt(document.getElementById('deep-fry-slider').value, 10);
+            drawSochafkiMeme(currentSlider);
+        });
+
+        /* =====================================================================
+           2. INTERAKTYWNY SUWAK DEEP-FRY (CAŁA STRONA 0% -> 100%)
+           ===================================================================== */
+        const deepFrySlider = document.getElementById('deep-fry-slider');
+        const deepFryBadge = document.getElementById('deep-fry-badge');
+        const fryContainer = document.getElementById('fry-container');
+        const jpegNoiseOverlay = document.getElementById('jpeg-noise-overlay');
+
+        function applyDeepFry(val) {
+            const level = parseInt(val, 10);
+
+            let label = 'Zwykłe słuchawki';
+            if (level >= 15 && level < 40) label = 'Lekki JPEG z 2009';
+            else if (level >= 40 && level < 70) label = 'Smażenie na głębokim oleju';
+            else if (level >= 70 && level < 95) label = 'Bazar 240p Przester';
+            else if (level >= 95) label = 'SOCHAFKI 144p OVERDRIVE 🔥';
+
+            deepFryBadge.textContent = `${level}% • ${label}`;
+
+            if (level >= 90) {
+                deepFryBadge.className = 'text-xs font-black px-2.5 py-0.5 rounded-full bg-red-600 text-white animate-pulse';
+            } else if (level >= 50) {
+                deepFryBadge.className = 'text-xs font-black px-2.5 py-0.5 rounded-full bg-[#00ffff] text-black';
+            } else {
+                deepFryBadge.className = 'text-xs font-bold px-2.5 py-0.5 rounded-full bg-white text-black';
+            }
+
+            const contrast = 100 + level * 1.45;
+            const saturate = 100 + level * 2.2;
+            const blur = level > 65 ? ((level - 65) / 35) * 0.9 : 0;
+            const hue = level > 85 ? (level - 85) * 0.8 : 0;
+
+            let filterStr = `contrast(${contrast}%) saturate(${saturate}%) blur(${blur.toFixed(2)}px) hue-rotate(${hue}deg)`;
+            if (level >= 88) {
+                filterStr += ' url(#deep-fry-svg-filter)';
+            }
+
+            fryContainer.style.filter = level === 0 ? 'none' : filterStr;
+            jpegNoiseOverlay.style.opacity = (level / 100) * 0.55;
+
+            if (level >= 92) {
+                fryContainer.classList.add('shake-active');
+            } else {
+                fryContainer.classList.remove('shake-active');
+            }
+
+            drawSochafkiMeme(level);
+        }
+
+        deepFrySlider.addEventListener('input', (e) => applyDeepFry(e.target.value));
+
+        /* =====================================================================
+           3. SYMULATOR RUCHOMEGO KABLA (WEB AUDIO API)
+           ===================================================================== */
+        let isPlaying = false;
+        let cableAudioInitialized = false;
+        let seqInterval = null;
+        let vuInterval = null;
+        let stepIndex = 0;
+
+        let musicGain = null;
+        let noiseGain = null;
+        let humGain = null;
+        let pannerNode = null;
+        let filterNode = null;
+        let bassBoostNode = null;
+        let distortionNode = null;
+
+        const cableSlider = document.getElementById('cable-slider');
+        const cableAngleVal = document.getElementById('cable-angle-val');
+        const cableDegVal = document.getElementById('cable-deg-val');
+        const cableStatusText = document.getElementById('cable-status-text');
+        const cableStatusBox = document.getElementById('cable-status-box');
+        const leftStatusLabel = document.getElementById('left-status-label');
+        const rightStatusLabel = document.getElementById('right-status-label');
+        const jackPlugGroup = document.getElementById('jack-plug-group');
+        const jackCablePath = document.getElementById('jack-cable-path');
+
+        function makeDistortionCurve(amount) {
+            const k = amount;
+            const n_samples = 44100;
+            const curve = new Float32Array(n_samples);
+            const deg = Math.PI / 180;
+            for (let i = 0; i < n_samples; ++i) {
+                const x = (i * 2) / n_samples - 1;
+                curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+            }
+            return curve;
+        }
+
+        function initCableAudio() {
+            const ctx = ensureAudioCtx();
+            if (cableAudioInitialized) return;
+            cableAudioInitialized = true;
+
+            musicGain = ctx.createGain();
+            musicGain.gain.value = 0;
+
+            filterNode = ctx.createBiquadFilter();
+            filterNode.type = 'lowpass';
+            filterNode.frequency.value = 1800;
+
+            bassBoostNode = ctx.createBiquadFilter();
+            bassBoostNode.type = 'lowshelf';
+            bassBoostNode.frequency.value = 140;
+            bassBoostNode.gain.value = 0;
+
+            distortionNode = ctx.createWaveShaper();
+            distortionNode.curve = makeDistortionCurve(12);
+            distortionNode.oversample = '2x';
+
+            if (ctx.createStereoPanner) {
+                pannerNode = ctx.createStereoPanner();
+                pannerNode.pan.value = -1;
+            } else {
+                pannerNode = ctx.createGain();
+            }
+
+            musicGain.connect(filterNode);
+            filterNode.connect(bassBoostNode);
+            bassBoostNode.connect(distortionNode);
+            distortionNode.connect(pannerNode);
+            pannerNode.connect(ctx.destination);
+
+            // Generator szumu i trzasków
+            const bufferSize = ctx.sampleRate * 2;
+            const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                const crackle = Math.random() > 0.992 ? (Math.random() * 2 - 1) * 1.5 : 0;
+                output[i] = (Math.random() * 2 - 1) * 0.25 + crackle;
+            }
+            const whiteNoise = ctx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+            whiteNoise.loop = true;
+
+            noiseGain = ctx.createGain();
+            noiseGain.gain.value = 0;
+            whiteNoise.connect(noiseGain);
+            noiseGain.connect(pannerNode);
+            whiteNoise.start();
+
+            // Brum sieciowy 50 Hz
+            const humOsc = ctx.createOscillator();
+            humOsc.type = 'sawtooth';
+            humOsc.frequency.value = 50;
+            humGain = ctx.createGain();
+            humGain.gain.value = 0;
+            humOsc.connect(humGain);
+            humGain.connect(ctx.destination);
+            humOsc.start();
+        }
+
+        const melodyNotes = [329.63, 0, 392.00, 329.63, 440.00, 0, 493.88, 392.00, 329.63, 293.66, 246.94, 0, 293.66, 329.63, 392.00, 0];
+        const bassNotes   = [82.41, 82.41, 98.00, 82.41, 110.00, 110.00, 123.47, 98.00];
+
+        function playStep() {
+            if (!audioCtx || !isPlaying) return;
+            const now = audioCtx.currentTime;
+
+            if (stepIndex % 2 === 0) {
+                const kickOsc = audioCtx.createOscillator();
+                const kickGain = audioCtx.createGain();
+                kickOsc.frequency.setValueAtTime(140, now);
+                kickOsc.frequency.exponentialRampToValueAtTime(42, now + 0.12);
+                kickGain.gain.setValueAtTime(0.55, now);
+                kickGain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+                kickOsc.connect(kickGain);
+                kickGain.connect(musicGain);
+                kickOsc.start(now);
+                kickOsc.stop(now + 0.15);
+            }
+
+            const bFreq = bassNotes[Math.floor(stepIndex / 2) % bassNotes.length];
+            const bassOsc = audioCtx.createOscillator();
+            const bassG = audioCtx.createGain();
+            bassOsc.type = 'sawtooth';
+            bassOsc.frequency.setValueAtTime(bFreq, now);
+            bassG.gain.setValueAtTime(0.25, now);
+            bassG.gain.exponentialRampToValueAtTime(0.01, now + 0.17);
+            bassOsc.connect(bassG);
+            bassG.connect(musicGain);
+            bassOsc.start(now);
+            bassOsc.stop(now + 0.18);
+
+            const mFreq = melodyNotes[stepIndex % melodyNotes.length];
+            if (mFreq > 0) {
+                const leadOsc = audioCtx.createOscillator();
+                const leadG = audioCtx.createGain();
+                leadOsc.type = 'square';
+                leadOsc.frequency.setValueAtTime(mFreq, now);
+                leadG.gain.setValueAtTime(0.16, now);
+                leadG.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                leadOsc.connect(leadG);
+                leadG.connect(musicGain);
+                leadOsc.start(now);
+                leadOsc.stop(now + 0.16);
+            }
+
+            stepIndex++;
+        }
+
+        function updateCablePhysics(val) {
+            const v = parseInt(val, 10);
+            const deg = Math.round((v - 50) * 1.1);
+            cableAngleVal.textContent = v;
+            cableDegVal.textContent = deg;
+
+            const visualAngle = (v - 50) * 0.55;
+            jackPlugGroup.style.transform = `rotate(${visualAngle}deg)`;
+            const bendY = 60 + (v - 50) * 0.9;
+            jackCablePath.setAttribute('d', `M 108 60 Q 138 ${bendY}, 168 ${bendY + 15}`);
+
+            let statusMsg = '';
+            let boxBorder = 'border-neutral-700';
+            let textColor = 'text-red-400';
+            let leftLbl = 'Brak sygnału';
+            let rightLbl = 'Brak sygnału';
+
+            let targetPan = 0;
+            let targetMusicVol = 0;
+            let targetNoiseVol = 0;
+            let targetHumVol = 0;
+            let targetFilterFreq = 1200;
+            let targetBassBoost = 0;
+            let targetDistort = 10;
+
+            if (v < 25) {
+                statusMsg = '❌ Brak styku (tylko brum 50Hz)';
+                textColor = 'text-red-500';
+                boxBorder = 'border-red-500/60';
+                leftLbl = 'Martwa';
+                rightLbl = 'Martwa';
+                targetMusicVol = 0.01;
+                targetNoiseVol = 0.05;
+                targetHumVol = 0.04;
+            } else if (v >= 25 && v < 50) {
+                statusMsg = '⚡ Tylko lewa trzeszczy';
+                textColor = 'text-amber-400';
+                boxBorder = 'border-amber-400/60';
+                leftLbl = 'Trzeszczy (MONO)';
+                rightLbl = 'Cisza';
+                targetPan = -1;
+                targetMusicVol = 0.22;
+                targetNoiseVol = 0.12;
+                targetFilterFreq = 1100;
+                targetDistort = 35;
+            } else if (v >= 50 && v < 68) {
+                statusMsg = '🪣 Prawa gra jak z wiadra';
+                textColor = 'text-orange-400';
+                boxBorder = 'border-orange-400/60';
+                leftLbl = 'Cisza';
+                rightLbl = 'Jak ze studni';
+                targetPan = 1;
+                targetMusicVol = 0.20;
+                targetNoiseVol = 0.10;
+                targetFilterFreq = 750;
+                targetDistort = 25;
+            } else if (v >= 68 && v <= 74) {
+                statusMsg = '🔥 IDEALNIE, NIE RUSZAJ SIĘ! (STEREO)';
+                textColor = 'text-[#00ffff]';
+                boxBorder = 'border-[#00ffff] shadow-[0_0_15px_rgba(0,255,255,0.4)]';
+                leftLbl = 'BASS BOOSTED! 🔥';
+                rightLbl = 'BASS BOOSTED! 🔥';
+                targetPan = 0;
+                targetMusicVol = 0.36;
+                targetNoiseVol = 0.005;
+                targetFilterFreq = 9500;
+                targetBassBoost = 14;
+                targetDistort = 48;
+            } else if (v > 74 && v < 90) {
+                statusMsg = '🔉 Tylko lewa i ledwo zipie';
+                textColor = 'text-yellow-400';
+                boxBorder = 'border-yellow-500/50';
+                leftLbl = 'Ledwo gra';
+                rightLbl = 'Rozłączona';
+                targetPan = -0.9;
+                targetMusicVol = 0.1;
+                targetNoiseVol = 0.14;
+                targetFilterFreq = 600;
+            } else {
+                statusMsg = '📻 Zwarcie! Odbierasz szum z kosmosu';
+                textColor = 'text-red-400';
+                boxBorder = 'border-red-500/70';
+                leftLbl = 'KRRRRRZZZZZ';
+                rightLbl = 'BZZZZZZT';
+                targetPan = 0;
+                targetMusicVol = 0.05;
+                targetNoiseVol = 0.20;
+                targetHumVol = 0.06;
+                targetDistort = 90;
+            }
+
+            if (isPlaying) {
+                cableStatusText.textContent = statusMsg;
+                cableStatusText.className = `text-sm sm:text-base font-black ${textColor}`;
+                cableStatusBox.className = `w-full sm:w-auto text-center sm:text-right px-4 py-2.5 rounded-xl bg-neutral-900 border ${boxBorder} transition-all`;
+                leftStatusLabel.textContent = leftLbl;
+                rightStatusLabel.textContent = rightLbl;
+            } else {
+                cableStatusText.textContent = '🔇 Cisza (Kliknij „Włącz muzykę”)';
+                cableStatusText.className = 'text-sm sm:text-base font-black text-neutral-400';
+                leftStatusLabel.textContent = 'Wyłączone';
+                rightStatusLabel.textContent = 'Wyłączone';
+            }
+
+            if (cableAudioInitialized && audioCtx && isPlaying) {
+                const t = audioCtx.currentTime;
+                if (pannerNode && pannerNode.pan) {
+                    pannerNode.pan.setTargetAtTime(targetPan, t, 0.03);
+                }
+                musicGain.gain.setTargetAtTime(targetMusicVol, t, 0.03);
+                noiseGain.gain.setTargetAtTime(targetNoiseVol, t, 0.03);
+                humGain.gain.setTargetAtTime(targetHumVol, t, 0.03);
+                filterNode.frequency.setTargetAtTime(targetFilterFreq, t, 0.05);
+                bassBoostNode.gain.setTargetAtTime(targetBassBoost, t, 0.05);
+                distortionNode.curve = makeDistortionCurve(targetDistort);
+            }
+        }
+
+        function animateVU() {
+            const leftBars = document.querySelectorAll('#vu-left .vu-bar');
+            const rightBars = document.querySelectorAll('#vu-right .vu-bar');
+            const v = parseInt(cableSlider.value, 10);
+
+            leftBars.forEach(bar => {
+                if (!isPlaying) {
+                    bar.style.height = '8%';
+                    bar.style.backgroundColor = '#333';
+                    return;
+                }
+                let power = 0.1;
+                if (v >= 25 && v < 50) power = 0.75;
+                else if (v >= 68 && v <= 74) power = 1.0;
+                else if (v > 74 && v < 90) power = 0.35;
+                else if (v >= 90) power = 0.5;
+
+                const h = Math.max(8, Math.floor(Math.random() * 95 * power));
+                bar.style.height = `${h}%`;
+                bar.style.backgroundColor = (v >= 68 && v <= 74) ? '#00ffff' : (power > 0.3 ? '#facc15' : '#444');
+            });
+
+            rightBars.forEach(bar => {
+                if (!isPlaying) {
+                    bar.style.height = '8%';
+                    bar.style.backgroundColor = '#333';
+                    return;
+                }
+                let power = 0.08;
+                if (v >= 50 && v < 68) power = 0.7;
+                else if (v >= 68 && v <= 74) power = 1.0;
+                else if (v >= 90) power = 0.5;
+
+                const h = Math.max(8, Math.floor(Math.random() * 95 * power));
+                bar.style.height = `${h}%`;
+                bar.style.backgroundColor = (v >= 68 && v <= 74) ? '#00ffff' : (power > 0.3 ? '#fb923c' : '#444');
+            });
+        }
+
+        function toggleAudio() {
+            const btnIcon = document.getElementById('audio-btn-icon');
+            const btnText = document.getElementById('audio-btn-text');
+
+            if (!isPlaying) {
+                initCableAudio();
+                isPlaying = true;
+                btnIcon.textContent = '⏹';
+                btnText.textContent = 'WYŁĄCZ MUZYKĘ';
+                updateCablePhysics(cableSlider.value);
+
+                seqInterval = setInterval(playStep, 185);
+                vuInterval = setInterval(animateVU, 90);
+            } else {
+                isPlaying = false;
+                btnIcon.textContent = '▶';
+                btnText.textContent = 'WŁĄCZ MUZYKĘ';
+                clearInterval(seqInterval);
+                clearInterval(vuInterval);
+
+                if (cableAudioInitialized && audioCtx) {
+                    const t = audioCtx.currentTime;
+                    musicGain.gain.setTargetAtTime(0, t, 0.02);
+                    noiseGain.gain.setTargetAtTime(0, t, 0.02);
+                    humGain.gain.setTargetAtTime(0, t, 0.02);
+                }
+                updateCablePhysics(cableSlider.value);
+                animateVU();
+            }
+        }
+
+        function nudgeCable() {
+            const cur = parseInt(cableSlider.value, 10);
+            const delta = Math.floor(Math.random() * 19) - 9;
+            const next = Math.max(0, Math.min(100, cur + (delta === 0 ? 5 : delta)));
+            cableSlider.value = next;
+            updateCablePhysics(next);
+        }
+
+        function scrollToSimulatorAndPlay() {
+            document.getElementById('symulator').scrollIntoView({ behavior: 'smooth' });
+            if (!isPlaying) {
+                toggleAudio();
+            }
+        }
+
+        cableSlider.addEventListener('input', (e) => updateCablePhysics(e.target.value));
+
+        /* =====================================================================
+           4. SYMULATOR KOMPUTERA KAMILA STEINBACHA™ (CRT + WEB AUDIO API)
+           ===================================================================== */
+        let pcPoweredOn = true;
+        let pcBlessedCount = 0;
+        let pcShutdownInterval = null;
+        let pcGameInterval = null;
+        let pcFanNodes = null;
+        let xpToastTimer = null;
+
+        const crtViews = ['desktop', 'shutdown', 'game', 'bsod', 'off'];
+
+        function setCrtView(viewName) {
+            crtViews.forEach(v => {
+                const el = document.getElementById(`crt-view-${v}`);
+                if (el) el.classList.toggle('hidden', v !== viewName);
+            });
+        }
+
+        function stopPcActivities() {
+            if (pcShutdownInterval) { clearInterval(pcShutdownInterval); pcShutdownInterval = null; }
+            if (pcGameInterval) { clearInterval(pcGameInterval); pcGameInterval = null; }
+            document.getElementById('pc-tower').classList.remove('pc-rattling');
+            stopJetFanSound();
+        }
+
+        function showPcToast(msg) {
+            if (!pcPoweredOn) return;
+            const toast = document.getElementById('xp-toast');
+            document.getElementById('xp-toast-text').textContent = msg;
+            toast.classList.remove('hidden');
+            if (xpToastTimer) clearTimeout(xpToastTimer);
+            xpToastTimer = setTimeout(() => toast.classList.add('hidden'), 4500);
+        }
+
+        // Syntetyczny dźwięk błogosławieństwa (delikatny akord anielski)
+        function playBlessingChime() {
+            const ctx = ensureAudioCtx();
+            const now = ctx.currentTime;
+            [523.25, 659.25, 783.99].forEach((freq, idx) => {
+                const osc = ctx.createOscillator();
+                const g = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+                g.gain.setValueAtTime(0.001, now + idx * 0.06);
+                g.gain.linearRampToValueAtTime(0.07, now + idx * 0.06 + 0.05);
+                g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.7);
+                osc.connect(g);
+                g.connect(ctx.destination);
+                osc.start(now + idx * 0.06);
+                osc.stop(now + idx * 0.06 + 0.75);
+            });
+        }
+
+        // Syntetyczny dźwięk błędu Windows XP (DUNG!)
+        function playXpErrorSound() {
+            const ctx = ensureAudioCtx();
+            const now = ctx.currentTime;
+            [185, 138].forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const g = ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(freq, now + i * 0.08);
+                g.gain.setValueAtTime(0.14, now + i * 0.08);
+                g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.35);
+                osc.connect(g);
+                g.connect(ctx.destination);
+                osc.start(now + i * 0.08);
+                osc.stop(now + i * 0.08 + 0.38);
+            });
+        }
+
+        // Syntetyczny dźwięk kopnięcia listwy (PYK-BZZZT)
+        function playPowerCutSound() {
+            const ctx = ensureAudioCtx();
+            const now = ctx.currentTime;
+            // Kliknięcie przycisku listwy
+            const clickOsc = ctx.createOscillator();
+            const clickG = ctx.createGain();
+            clickOsc.type = 'square';
+            clickOsc.frequency.setValueAtTime(900, now);
+            clickOsc.frequency.exponentialRampToValueAtTime(60, now + 0.04);
+            clickG.gain.setValueAtTime(0.14, now);
+            clickG.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+            clickOsc.connect(clickG);
+            clickG.connect(ctx.destination);
+            clickOsc.start(now);
+            clickOsc.stop(now + 0.06);
+
+            // Opadający pisk cewek CRT
+            const crtOsc = ctx.createOscillator();
+            const crtG = ctx.createGain();
+            crtOsc.type = 'sine';
+            crtOsc.frequency.setValueAtTime(2200, now + 0.03);
+            crtOsc.frequency.exponentialRampToValueAtTime(110, now + 0.45);
+            crtG.gain.setValueAtTime(0.06, now + 0.03);
+            crtG.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+            crtOsc.connect(crtG);
+            crtG.connect(ctx.destination);
+            crtOsc.start(now + 0.03);
+            crtOsc.stop(now + 0.5);
+        }
+
+        // Ryk wentylatora odrzutowca (CS 1.6 / GTA 4)
+        function startJetFanSound() {
+            stopJetFanSound();
+            const ctx = ensureAudioCtx();
+            const now = ctx.currentTime;
+
+            const bufferSize = ctx.sampleRate * 2;
+            const buf = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = ctx.createBufferSource();
+            noise.buffer = buf;
+            noise.loop = true;
+
+            const bp = ctx.createBiquadFilter();
+            bp.type = 'bandpass';
+            bp.frequency.setValueAtTime(260, now);
+            bp.frequency.exponentialRampToValueAtTime(880, now + 2.2);
+            bp.Q.value = 1.4;
+
+            const whine = ctx.createOscillator();
+            whine.type = 'sawtooth';
+            whine.frequency.setValueAtTime(110, now);
+            whine.frequency.exponentialRampToValueAtTime(340, now + 2.2);
+
+            const whineG = ctx.createGain();
+            whineG.gain.value = 0.025;
+
+            const masterG = ctx.createGain();
+            masterG.gain.setValueAtTime(0.01, now);
+            masterG.gain.linearRampToValueAtTime(0.11, now + 1.5);
+
+            noise.connect(bp);
+            bp.connect(masterG);
+            whine.connect(whineG);
+            whineG.connect(masterG);
+            masterG.connect(ctx.destination);
+
+            noise.start(now);
+            whine.start(now);
+
+            pcFanNodes = { noise, whine, masterG };
+        }
+
+        function stopJetFanSound() {
+            if (!pcFanNodes || !audioCtx) return;
+            try {
+                const t = audioCtx.currentTime;
+                pcFanNodes.masterG.gain.setTargetAtTime(0.0001, t, 0.05);
+                pcFanNodes.noise.stop(t + 0.15);
+                pcFanNodes.whine.stop(t + 0.15);
+            } catch (e) {}
+            pcFanNodes = null;
+        }
+
+        // AKCJA 1: Przeżegnaj się przed monitorem
+        function steinbachBless() {
+            playBlessingChime();
+            pcBlessedCount++;
+            const bonus = Math.min(90, pcBlessedCount * 15);
+            const badge = document.getElementById('pc-blessing-badge');
+            badge.textContent = `✝️ Błogosławieństwo: AKTYWNE (Szansa bez BSOD: +${bonus}%)`;
+            badge.className = 'px-3 py-1.5 rounded-xl bg-[#00ffff]/15 border border-[#00ffff] text-[#00ffff] font-black';
+
+            // Animacja krzyża nad monitorem
+            const overlay = document.getElementById('blessing-overlay');
+            overlay.classList.remove('hidden');
+            overlay.classList.remove('blessing-anim');
+            void overlay.offsetWidth; // reset animacji
+            overlay.classList.add('blessing-anim');
+
+            if (pcPoweredOn) {
+                showPcToast('✝️ Znak krzyża wykonany! Teraz możesz spróbować kliknąć Start → Wyłącz komputer.');
+            }
+        }
+
+        // AKCJA 2: Start → Wyłącz komputer (10-minutowy pasek XP)
+        function steinbachShutdown() {
+            if (!pcPoweredOn) return;
+            stopPcActivities();
+
+            // Bez przeżegnania -> BSOD!
+            if (pcBlessedCount === 0) {
+                playXpErrorSound();
+                setCrtView('bsod');
+                document.getElementById('pc-fps-badge').textContent = '💀 Stan: BSOD (Brak znaku krzyża!)';
+                return;
+            }
+
+            setCrtView('shutdown');
+            document.getElementById('pc-fps-badge').textContent = '⏳ Stan: Zamykanie (10 min)...';
+            document.getElementById('pc-temp-badge').textContent = '🌡️ CPU: 68°C';
+
+            const messages = [
+                'Zamykanie Gadu-Gadu...',
+                'Nagrywanie 10-minutowego poradnika na YouTube (144p)...',
+                'Zapisywanie ustawień Winampa...',
+                'Odłączanie lewej Sochafki (prawa i tak nie była podłączona)...',
+                'Czekanie na odpowiedź programu Paint.exe...',
+                'Sprawdzanie czy na pewno przeżegnałeś się przed monitorem...'
+            ];
+
+            let secLeft = 599;
+            let prog = 3;
+            let msgIdx = 0;
+
+            document.getElementById('shutdown-step-msg').textContent = messages[0];
+            document.getElementById('shutdown-progress-bar').style.width = `${prog}%`;
+            document.getElementById('shutdown-timer-text').textContent = 'Pozostało: 9 min 59 sek — NIE RUSZAJ MYSZKĄ!';
+
+            pcShutdownInterval = setInterval(() => {
+                secLeft = Math.max(540, secLeft - 1);
+                prog = Math.min(28, prog + 0.6); // pasek nigdy się nie kończy szybko!
+                if (secLeft % 3 === 0) {
+                    msgIdx = (msgIdx + 1) % messages.length;
+                    document.getElementById('shutdown-step-msg').textContent = messages[msgIdx];
+                }
+                const m = Math.floor(secLeft / 60);
+                const s = secLeft % 60;
+                document.getElementById('shutdown-progress-bar').style.width = `${prog.toFixed(1)}%`;
+                document.getElementById('shutdown-timer-text').textContent =
+                    `Pozostało: ${m} min ${s < 10 ? '0' + s : s} sek — nie ruszaj myszką! (albo kopnij listwę)`;
+            }, 1000);
+        }
+
+        // AKCJA 3: Odpal CS 1.6 / GTA 4 (3 FPS + ryk wentylatora + 114°C)
+        function steinbachRunGame() {
+            if (!pcPoweredOn) return;
+            stopPcActivities();
+
+            // Ostrzeżenie lub BSOD bez przeżegnania
+            if (pcBlessedCount === 0) {
+                playXpErrorSound();
+                setCrtView('bsod');
+                document.getElementById('pc-fps-badge').textContent = '💀 Stan: BSOD (GTA 4 zabiło Celerona)';
+                return;
+            }
+
+            setCrtView('game');
+            document.getElementById('pc-tower').classList.add('pc-rattling');
+            document.getElementById('pc-fps-badge').textContent = '🎮 Stan: 3 FPS Pokaz Slajdów';
+            startJetFanSound();
+
+            const slides = [
+                { emoji: '🔫🏃‍♂️💨', title: 'CS 1.6 • de_dust2 • LAG 999 ms', cap: 'Słychać kroki na gali (ale tylko w lewej Sochafce)' },
+                { emoji: '🚗🔥🏢', title: 'GTA 4 • Liberty City • 2 FPS', cap: 'Tekstury ulicy wczytają się w przyszły wtorek' },
+                { emoji: '💣💥📺', title: 'CS 1.6 • Brama na środku', cap: 'Ktoś rzucił flasha — monitor CRT świeci jak latarnia' },
+                { emoji: '✈️🌡️💻', title: 'ALERT: CPU 114°C', cap: 'Można smażyć jajecznicę na obudowie PC' }
+            ];
+
+            let temp = 84;
+            let slideIdx = 0;
+
+            const updateSlide = () => {
+                temp = Math.min(114, temp + Math.floor(Math.random() * 8) + 4);
+                const fps = Math.max(1, Math.min(4, Math.floor(Math.random() * 4) + 1));
+                const s = slides[slideIdx % slides.length];
+                document.getElementById('game-fps-num').textContent = fps;
+                document.getElementById('game-temp-num').textContent = temp;
+                document.getElementById('pc-temp-badge').textContent = `🌡️ CPU: ${temp}°C 🔥`;
+                document.getElementById('game-slide-emoji').textContent = s.emoji;
+                document.getElementById('game-slide-title').textContent = s.title;
+                document.getElementById('game-slide-caption').textContent = s.cap;
+                slideIdx++;
+            };
+
+            updateSlide();
+            pcGameInterval = setInterval(updateSlide, 1450);
+        }
+
+        // AKCJA 4: Kopnij listwę (Czerwony przycisk)
+        function steinbachKickStrip() {
+            if (!pcPoweredOn) return;
+            stopPcActivities();
+            playPowerCutSound();
+            pcPoweredOn = false;
+
+            const screen = document.getElementById('crt-screen-frame');
+            screen.classList.add('crt-turning-off');
+
+            document.getElementById('crt-power-led').className = 'w-3 h-3 rounded-full bg-neutral-700 border border-neutral-900';
+            document.getElementById('pc-power-led').className = 'w-2.5 h-2.5 rounded-full bg-neutral-700';
+            document.getElementById('pc-hdd-led').className = 'w-2.5 h-2.5 rounded-full bg-neutral-700';
+            document.getElementById('pc-fps-badge').textContent = '⚫ Stan: Wyłączony (Listwa kopnięta)';
+            document.getElementById('pc-temp-badge').textContent = '🌡️ CPU: Stygnie (72°C)';
+
+            setTimeout(() => {
+                screen.classList.remove('crt-turning-off');
+                setCrtView('off');
+            }, 520);
+        }
+
+        // Włączenie ponowne (BIOS Beep)
+        function steinbachPowerOn() {
+            if (pcPoweredOn) {
+                steinbachReboot();
+                return;
+            }
+            playSoundboard('pcstart');
+            pcPoweredOn = true;
+            setCrtView('desktop');
+            document.getElementById('crt-power-led').className = 'w-3 h-3 rounded-full bg-green-400 shadow-[0_0_8px_#4ade80] border border-green-900';
+            document.getElementById('pc-power-led').className = 'w-2.5 h-2.5 rounded-full bg-green-500 shadow-[0_0_6px_#22c55e]';
+            document.getElementById('pc-hdd-led').className = 'w-2.5 h-2.5 rounded-full bg-red-600 hdd-busy';
+            document.getElementById('pc-fps-badge').textContent = '⚡ Stan: Windows XP Pulpit';
+            document.getElementById('pc-temp-badge').textContent = '🌡️ CPU: 54°C';
+            showPcToast('🖥️ Komputer wstał po kopnięciu listwy! System Windows odzyskał sprawność po poważnym błędzie.');
+        }
+
+        function steinbachReboot() {
+            stopPcActivities();
+            playSoundboard('pcstart');
+            pcPoweredOn = true;
+            setCrtView('desktop');
+            document.getElementById('pc-fps-badge').textContent = '⚡ Stan: Windows XP Pulpit';
+            document.getElementById('pc-temp-badge').textContent = '🌡️ CPU: 54°C';
+        }
+
+        /* =====================================================================
+           5. MINI-GRA: SYMULATOR ROZPLĄTYWANIA KABLA SOCHAFEK
+           ===================================================================== */
+        let tangleLevel = 100;
+        let tangleAttempts = 0;
+        let tangleTimer = null;
+
+        const tangleEvents = [
+            { text: 'Położyłeś na biurku na 2 sekundy — powstał węzeł żeglarski!', add: 45 },
+            { text: 'Kabel owinął się wokół kółka od fotela obrotowego!', add: 80 },
+            { text: 'Włożyłeś do kieszeni — wygenerowano nową czasoprzestrzeń!', add: 150 },
+            { text: 'Prawa słuchawka przeszła przez pętlę, która fizycznie nie istnieje!', add: 65 },
+            { text: 'Kabel sam związał się z kablem od ładowarki do starej Nokii!', add: 95 },
+            { text: 'Próbowałeś pociągnąć za wtyczkę — zacisnąłeś supeł gordyjski na amen!', add: 110 }
+        ];
+
+        function updateTangleUI() {
+            document.getElementById('tangle-percent-text').textContent = `${tangleLevel}%`;
+            document.getElementById('tangle-attempts').textContent = tangleAttempts;
+            const barWidth = Math.min(100, Math.max(4, (tangleLevel / 999) * 100));
+            document.getElementById('tangle-bar').style.width = `${barWidth}%`;
+
+            const txt = document.getElementById('tangle-percent-text');
+            if (tangleLevel >= 500) txt.className = 'text-xl text-red-500 font-mono animate-pulse';
+            else if (tangleLevel >= 200) txt.className = 'text-xl text-amber-400 font-mono';
+            else txt.className = 'text-xl text-[#00ffff] font-mono';
+        }
+
+        function tryUntangle() {
+            tangleAttempts++;
+            const reduction = Math.floor(Math.random() * 8) + 4; // -4% do -11%
+            tangleLevel = Math.max(12, tangleLevel - reduction);
+            updateTangleUI();
+
+            const log = document.getElementById('tangle-log');
+            log.innerHTML = `<span class="text-green-400 font-bold">✨ Udało się poluzować supeł (-${reduction}%)! Jeszcze tylko sekunda...</span>`;
+
+            if (tangleTimer) clearTimeout(tangleTimer);
+            tangleTimer = setTimeout(() => {
+                const ev = tangleEvents[Math.floor(Math.random() * tangleEvents.length)];
+                tangleLevel = Math.min(999, tangleLevel + ev.add);
+                updateTangleUI();
+                log.innerHTML = `<span class="text-red-400 font-bold">💥 ${ev.text} (+${ev.add}%)</span>`;
+            }, 800);
+        }
+
+        function giveUpUntangle() {
+            if (tangleTimer) clearTimeout(tangleTimer);
+            tangleLevel = 100;
+            updateTangleUI();
+            document.getElementById('tangle-log').innerHTML =
+                `<span class="text-[#00ffff] font-bold">🩹 Zaklejono cały kłębek czarną taśmą izolacyjną! Teraz to oficjalnie „kabel bezprzewodowy o zasięgu 18 cm”. Splątanie zresetowane do fabrycznego 100%.</span>`;
+        }
+
+        /* =====================================================================
+           6. BAZAROWY SOUNDBOARD SOCHAFEK (WEB AUDIO API)
+           ===================================================================== */
+        function playSoundboard(type) {
+            const ctx = ensureAudioCtx();
+            const now = ctx.currentTime;
+            const status = document.getElementById('soundboard-status');
+
+            if (type === 'gsm') {
+                // Klasyczne zakłócenia GSM: ty-ty-ty-ty-bzzzt! (pulsacja ~217 Hz w rytmie TDMA)
+                status.textContent = '📱 Odtwarzanie: Zakłócenia GSM (zaraz przyjdzie SMS z sieci Plus!)';
+                const bursts = [0, 0.14, 0.28, 0.42, 0.62, 0.76, 0.90];
+                bursts.forEach((offset, i) => {
+                    const dur = i === 3 || i === 6 ? 0.11 : 0.08;
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(217, now + offset);
+                    g.gain.setValueAtTime(0.09, now + offset);
+                    g.gain.exponentialRampToValueAtTime(0.001, now + offset + dur);
+                    osc.connect(g);
+                    g.connect(ctx.destination);
+                    osc.start(now + offset);
+                    osc.stop(now + offset + dur + 0.02);
+                });
+            } else if (type === 'feedback') {
+                // Krótki, bezpieczny i cichy pisk sprzężenia 3kHz
+                status.textContent = '🎤 Odtwarzanie: Sprzężenie mikrofonu z sali informatycznej (ciche, bezpieczne!)';
+                const osc = ctx.createOscillator();
+                const g = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(2850, now);
+                osc.frequency.linearRampToValueAtTime(3050, now + 0.6);
+                g.gain.setValueAtTime(0.001, now);
+                g.gain.linearRampToValueAtTime(0.04, now + 0.15);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+                osc.connect(g);
+                g.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.9);
+            } else if (type === 'hum') {
+                // Wyciągnięty Jack: soczysty brum 50Hz + 100Hz
+                status.textContent = '🔌 Odtwarzanie: Wyciągnięty Jack dotykający kaloryfera (BRUM 50Hz)';
+                [50, 100, 150].forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const g = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, now);
+                    g.gain.setValueAtTime(0.08 / (idx + 1), now);
+                    g.gain.setTargetAtTime(0.001, now + 0.85, 0.1);
+                    osc.connect(g);
+                    g.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 1.15);
+                });
+            } else if (type === 'pcstart') {
+                // Start Komputera Steinbacha: BIOS Beep + szum dysku HDD + rozpędzający się wiatrak
+                status.textContent = '🖥️ Odtwarzanie: Start Komputera Steinbacha (BIOS Beep + HDD + Wiatrak)';
+                // 1. BIOS Beep
+                const beep = ctx.createOscillator();
+                const beepG = ctx.createGain();
+                beep.type = 'square';
+                beep.frequency.setValueAtTime(1000, now + 0.08);
+                beepG.gain.setValueAtTime(0.07, now + 0.08);
+                beepG.gain.setValueAtTime(0.001, now + 0.24);
+                beep.connect(beepG);
+                beepG.connect(ctx.destination);
+                beep.start(now + 0.08);
+                beep.stop(now + 0.26);
+
+                // 2. Rozpędzający się wiatrak + mielenie dysku HDD
+                const bufSize = ctx.sampleRate * 1.4;
+                const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+                const ch = buf.getChannelData(0);
+                for (let i = 0; i < bufSize; i++) {
+                    const hddClick = (i % 2400 < 90) ? (Math.random() * 0.9) : 0;
+                    ch[i] = (Math.random() * 2 - 1) * 0.4 + hddClick;
+                }
+                const src = ctx.createBufferSource();
+                src.buffer = buf;
+
+                const filt = ctx.createBiquadFilter();
+                filt.type = 'bandpass';
+                filt.frequency.setValueAtTime(180, now + 0.2);
+                filt.frequency.exponentialRampToValueAtTime(650, now + 1.3);
+
+                const g = ctx.createGain();
+                g.gain.setValueAtTime(0.01, now + 0.2);
+                g.gain.linearRampToValueAtTime(0.11, now + 0.6);
+                g.gain.exponentialRampToValueAtTime(0.001, now + 1.55);
+
+                src.connect(filt);
+                filt.connect(g);
+                g.connect(ctx.destination);
+                src.start(now + 0.2);
+            }
+        }
+
+        /* =====================================================================
+           7. AKORDEON FAQ
+           ===================================================================== */
+        function toggleFaq(btn) {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('.faq-icon');
+            const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+
+            if (isOpen) {
+                content.style.maxHeight = '0px';
+                content.classList.add('opacity-0');
+                icon.textContent = '+';
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                content.classList.remove('opacity-0');
+                icon.textContent = '−';
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        /* =====================================================================
+           8. FAŁSZYWY KOSZYK / MODAL + KONFETTI „SOCHAFKI”
+           ===================================================================== */
+        const buyModal = document.getElementById('buy-modal');
+        const modalStepSelect = document.getElementById('modal-step-select');
+        const modalStepSuccess = document.getElementById('modal-step-success');
+        const extraTapeCheckbox = document.getElementById('extra-tape');
+        const extraCrumbsCheckbox = document.getElementById('extra-crumbs');
+        const modalTotalPrice = document.getElementById('modal-total-price');
+
+        function updateModalPrice() {
+            const selected = document.querySelector('input[name="sochafki-variant"]:checked');
+            let price = parseFloat(selected.dataset.price);
+            if (extraTapeCheckbox.checked) price += 0.50;
+            if (extraCrumbsCheckbox.checked) price += 0.99;
+            modalTotalPrice.textContent = price.toFixed(2).replace('.', ',') + ' zł';
+
+            document.querySelectorAll('#variant-list label').forEach(lbl => {
+                const radio = lbl.querySelector('input[type="radio"]');
+                if (radio.checked) {
+                    lbl.className = 'flex items-start gap-3 p-3 rounded-2xl border-2 border-[#00ffff] bg-[#00ffff]/10 cursor-pointer transition-all';
+                } else {
+                    lbl.className = 'flex items-start gap-3 p-3 rounded-2xl border border-neutral-800 hover:border-neutral-600 bg-black cursor-pointer transition-all';
+                }
+            });
+        }
+
+        document.querySelectorAll('input[name="sochafki-variant"]').forEach(r => {
+            r.addEventListener('change', updateModalPrice);
+        });
+        extraTapeCheckbox.addEventListener('change', updateModalPrice);
+        extraCrumbsCheckbox.addEventListener('change', updateModalPrice);
+
+        function openBuyModal() {
+            modalStepSelect.classList.remove('hidden');
+            modalStepSuccess.classList.add('hidden');
+            updateModalPrice();
+            buyModal.classList.remove('hidden');
+            buyModal.classList.add('flex');
+        }
+
+        function closeBuyModal() {
+            buyModal.classList.add('hidden');
+            buyModal.classList.remove('flex');
+        }
+
+        buyModal.addEventListener('click', (e) => {
+            if (e.target === buyModal) closeBuyModal();
+        });
+
+        function completeOrder() {
+            const selected = document.querySelector('input[name="sochafki-variant"]:checked').value;
+            const extras = [];
+            if (extraTapeCheckbox.checked) extras.push('rolka taśmy izolacyjnej');
+            if (extraCrumbsCheckbox.checked) extras.push('słoik okruszków Krusz-Max 50g');
+            const extrasText = extras.length ? ` + ${extras.join(' + ')}` : '';
+
+            document.getElementById('order-summary-text').innerHTML =
+                `Wybrany wariant: <strong class="text-[#00ffff]">${selected}${extrasText}</strong>.<br>Przesyłka została zawinięta w foliówkę z dyskontu i przekazana kurierowi <strong>Gołąb Pocztowy Express™</strong> (dla zestawu z CRT lecą 4 gołębie na zmianę).`;
+
+            modalStepSelect.classList.add('hidden');
+            modalStepSuccess.classList.remove('hidden');
+
+            launchSochafkiConfetti();
+        }
+
+        /* =====================================================================
+           9. SYSTEM KONFETTI Z NAPISAMI „SOCHAFKI”
+           ===================================================================== */
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const confettiCtx = confettiCanvas.getContext('2d');
+        let confettiParticles = [];
+        let confettiAnimId = null;
+
+        function resizeConfettiCanvas() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfettiCanvas);
+        resizeConfettiCanvas();
+
+        function launchSochafkiConfetti() {
+            confettiParticles = [];
+            const texts = ['SOCHAFKI', '144p', '🎧', '4,99 ZŁ', 'TRZASK', '🕊️', 'STEINBACH', '3 FPS'];
+            const colors = ['#00ffff', '#ffffff', '#ff3b00', '#facc15'];
+
+            for (let i = 0; i < 95; i++) {
+                confettiParticles.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: -20 - Math.random() * 250,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: 3 + Math.random() * 5,
+                    rot: Math.random() * Math.PI * 2,
+                    vRot: (Math.random() - 0.5) * 0.15,
+                    isText: Math.random() > 0.35,
+                    text: texts[Math.floor(Math.random() * texts.length)],
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    size: 12 + Math.random() * 14
+                });
+            }
+
+            if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            let activeCount = 0;
+
+            confettiParticles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.rot += p.vRot;
+                p.vy += 0.08;
+
+                if (p.y < confettiCanvas.height + 50) {
+                    activeCount++;
+                    confettiCtx.save();
+                    confettiCtx.translate(p.x, p.y);
+                    confettiCtx.rotate(p.rot);
+
+                    if (p.isText) {
+                        confettiCtx.font = `900 ${Math.floor(p.size)}px Inter, sans-serif`;
+                        confettiCtx.fillStyle = p.color;
+                        confettiCtx.strokeStyle = '#000000';
+                        confettiCtx.lineWidth = 3;
+                        confettiCtx.strokeText(p.text, 0, 0);
+                        confettiCtx.fillText(p.text, 0, 0);
+                    } else {
+                        confettiCtx.fillStyle = p.color;
+                        confettiCtx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size / 2);
+                    }
+                    confettiCtx.restore();
+                }
+            });
+
+            if (activeCount > 0) {
+                confettiAnimId = requestAnimationFrame(animateConfetti);
+            } else {
+                confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        }
+
+        /* =====================================================================
+           INICJALIZACJA PO ZAŁADOWANIU STRONY
+           ===================================================================== */
+        window.addEventListener('DOMContentLoaded', () => {
+            applyDeepFry(deepFrySlider.value);
+            updateCablePhysics(cableSlider.value);
+            updateTangleUI();
+        });
+    </script>
+</body>
+</html>
